@@ -9,6 +9,7 @@
       "request": "attach",
       "port": 5678,
       "host": "localhost",
+      "justMyCode": false,
       "pathMappings": [
         {
           "localRoot": "${workspaceFolder}",
@@ -23,6 +24,7 @@
       "request": "attach",
       "port": 5678,
       "host": "homeassistant.local",
+      "justMyCode": false,
       "pathMappings": [
         {
           "localRoot": "${workspaceFolder}",
