@@ -85,23 +85,32 @@ class VaillantEntity(CoordinatorEntity[VaillantData]):
 
     @property
     def _client(self) -> ThermostatClient:
+        """Retrun the instance of the client which enables HTTP communication with the API."""
+
         return self.coordinator.data.client
 
     @property
     def _device(self) -> Device:
+        """Return the device which this entity represents."""
+
         return self.coordinator.data.devices[self._device_id]
 
     @property
     def _module(self) -> Module:
+        """Return the module which this entity represents."""
+
         return self.coordinator.data.modules[self._module_id]
 
     @property
     def unique_id(self) -> str:
         """Return a unique ID to use for this entity."""
+
         return self._module.id
 
     @property
     def device_info(self) -> dict[str, Any]:
+        """Return all device info available for this entity."""
+
         return {
             "identifiers": {(DOMAIN, self.unique_id)},
             "name": self._module.module_name,
