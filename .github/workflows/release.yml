@@ -1,0 +1,38 @@
+name: release
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  validate:
+  
+    runs-on: "ubuntu-latest"
+    name: Validate
+    
+    steps:
+        - uses: "actions/checkout@v2"
+        - name: HACS validation
+          uses: "hacs/action@main"
+          with:
+            category: "integration"
+            ignore: brands
+        - name: Hassfest validation
+          uses: "home-assistant/actions/hassfest@master"
+
+  release:
+    needs: [validate]
+
+    runs-on: ubuntu-latest
+    concurrency: release
+    environment:
+      name: release
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: Python Semantic Release
+      uses: relekang/python-semantic-release@v7.19.2
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
