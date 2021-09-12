@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import datetime
 import logging
-from typing import Literal
 
 from homeassistant.components.climate import ClimateEntity
 from homeassistant.components.climate.const import (

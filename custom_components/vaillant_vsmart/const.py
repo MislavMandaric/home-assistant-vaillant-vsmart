@@ -6,7 +6,8 @@ DOMAIN = "vaillant_vsmart"
 
 # Platforms
 CLIMATE = "climate"
-PLATFORMS = [CLIMATE]
+SWITCH = "switch"
+PLATFORMS = [CLIMATE, SWITCH]
 
 # Configuration and options
 CONF_APP_VERSION = "app_version"
