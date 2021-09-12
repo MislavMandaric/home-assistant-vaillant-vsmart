@@ -1,31 +1,33 @@
 {
-  "config": {
-      "step": {
-          "user": {
-            "title": "Vaillant vSMART",
-            "description": "If you need help with the configuration have a look here: https://github.com/MislavMandaric/home-assistant-vaillant-vsmart",
-              "data": {
-                  "username": "Username",
-                  "password": "Password"
-              }
-          }
-      },
-      "error": {
-          "auth": "Username/Password is wrong."
-      },
-      "abort": {
-          "single_instance_allowed": "Only a single instance is allowed."
-      }
-  },
-  "options": {
-      "step": {
-          "user": {
-              "data": {
-                  "binary_sensor": "Binary sensor enabled",
-                  "sensor": "Sensor enabled",
-                  "switch": "Switch enabled"
-              }
-          }
-      }
-  }
+    "state_attributes": {
+        "climate": {
+            "preset_mode": {
+                "winter": "Winter",
+                "summer": "Summer"
+            }
+        }
+    },
+    "config": {
+        "step": {
+            "user": {
+                "title": "Vaillant vSMART",
+                "description": "If you need help with the configuration have a look here: https://github.com/MislavMandaric/home-assistant-vaillant-vsmart",
+                "data": {
+                    "client_id": "Client ID",
+                    "client_secret": "Client secret",
+                    "username": "Username",
+                    "password": "Password",
+                    "user_prefix": "User prefix",
+                    "app_version": "App version"
+                }
+            }
+        },
+        "error": {
+            "unknown": "Something went wrong when authenticating with the API."
+        },
+        "abort": {
+            "already_in_progress": "Integration for provided user is already in progress.",
+            "already_configured": "Integration for provided user is already configured."
+        }
+    }
 }

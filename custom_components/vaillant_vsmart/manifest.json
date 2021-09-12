@@ -5,8 +5,14 @@
   "iot_class": "cloud_polling",
   "documentation": "https://github.com/MislavMandaric/home-assistant-vaillant-vsmart",
   "issue_tracker": "https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/issues",
-  "dependencies": ["http"],
+  "dependencies": [
+    "http"
+  ],
   "config_flow": true,
-  "codeowners": ["@MislavMandaric"],
-  "requirements": ["vaillant-netatmo-api==0.1.2"]
+  "codeowners": [
+    "@MislavMandaric"
+  ],
+  "requirements": [
+    "vaillant-netatmo-api==0.1.2"
+  ]
 }
