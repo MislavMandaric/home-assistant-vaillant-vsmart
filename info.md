@@ -17,7 +17,8 @@
 
 ## Installation
 
-1. Click install.
+1. Click "Install this repository in HACS"
+1. Restart Home Assistant
 1. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Vaillant vSMART".
 
 {% endif %}
