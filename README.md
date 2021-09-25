@@ -24,6 +24,7 @@
 
 1. Open HACS
 1. Search for "Vaillant vSMART"
+    1. If it doesn't exist yet, you first need to add `https://github.com/MislavMandaric/home-assistant-vaillant-vsmart` as custom repository
 1. Click "Install this repository in HACS"
 1. Restart Home Assistant
 1. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Vaillant vSMART"
