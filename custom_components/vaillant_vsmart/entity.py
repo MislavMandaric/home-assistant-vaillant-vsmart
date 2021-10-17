@@ -9,12 +9,12 @@ from homeassistant.helpers.update_coordinator import (
     DataUpdateCoordinator,
     UpdateFailed,
 )
-from vaillant_netatmo_api import Device, Module, ThermostatClient
+from vaillant_netatmo_api import ApiException, Device, Module, ThermostatClient
 
 from .const import DOMAIN
 
 
-UPDATE_INTERVAL = timedelta(seconds=30)
+UPDATE_INTERVAL = timedelta(minutes=5)
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -59,9 +59,9 @@ class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
             devices = await self._client.async_get_thermostats_data()
 
             return VaillantData(self._client, devices)
-        except Exception as err:
-            _LOGGER.exception("API communication exception")
-            raise UpdateFailed(f"Error communicating with API: {err}")
+        except ApiException as ex:
+            _LOGGER.exception(ex)
+            raise UpdateFailed(f"Error communicating with API: {ex}")
 
     async def async_close(self) -> None:
         await self._client.async_close()

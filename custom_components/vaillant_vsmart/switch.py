@@ -2,17 +2,20 @@
 from __future__ import annotations
 
 import datetime
+import logging
 
 from homeassistant.components.switch import SwitchEntity, DEVICE_CLASS_SWITCH
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from vaillant_netatmo_api.thermostat import SetpointMode
+from vaillant_netatmo_api.thermostat import ApiException, SetpointMode
 
 from .const import DOMAIN
 from .entity import VaillantCoordinator, VaillantEntity
 
 NAME_SUFFIX = "HWB"
+
+_LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
 async def async_setup_entry(
@@ -58,21 +61,27 @@ class VaillantSwitch(VaillantEntity, SwitchEntity):
             minutes=self._device.setpoint_default_duration
         )
 
-        await self._client.async_set_minor_mode(
-            self._device_id,
-            self._module_id,
-            SetpointMode.HWB,
-            True,
-            setpoint_endtime=endtime,
-        )
+        try:
+            await self._client.async_set_minor_mode(
+                self._device_id,
+                self._module_id,
+                SetpointMode.HWB,
+                True,
+                setpoint_endtime=endtime,
+            )
+        except ApiException as ex:
+            _LOGGER.exception(ex)
 
         await self.coordinator.async_request_refresh()
 
     async def async_turn_off(self, **kwargs):
         """Turn off the switch."""
 
-        await self._client.async_set_minor_mode(
-            self._device_id, self._module_id, SetpointMode.HWB, False
-        )
+        try:
+            await self._client.async_set_minor_mode(
+                self._device_id, self._module_id, SetpointMode.HWB, False
+            )
+        except ApiException as ex:
+            _LOGGER.exception(ex)
 
         await self.coordinator.async_request_refresh()

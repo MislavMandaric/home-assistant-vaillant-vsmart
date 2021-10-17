@@ -21,7 +21,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import ATTR_TEMPERATURE, TEMP_CELSIUS
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from vaillant_netatmo_api import SetpointMode, SystemMode
+from vaillant_netatmo_api import ApiException, SetpointMode, SystemMode
 
 from .const import (
     DOMAIN,
@@ -149,11 +149,14 @@ class VaillantClimate(VaillantEntity, ClimateEntity):
         _LOGGER.debug(f"Setting HVAC mode to: {hvac_mode}")
 
         if hvac_mode == HVAC_MODE_OFF:
-            await self._client.async_set_system_mode(
-                self._device_id,
-                self._module_id,
-                SystemMode.FROSTGUARD,
-            )
+            try:
+                await self._client.async_set_system_mode(
+                    self._device_id,
+                    self._module_id,
+                    SystemMode.FROSTGUARD,
+                )
+            except ApiException as ex:
+                _LOGGER.exception(ex)
         elif hvac_mode == HVAC_MODE_HEAT:
             if self._device.system_mode == SystemMode.FROSTGUARD:
                 return
@@ -164,28 +167,37 @@ class VaillantClimate(VaillantEntity, ClimateEntity):
             new_temperature = (
                 self._module.measured.temperature + DEFAULT_TEMPERATURE_INCREASE
             )
-            await self._client.async_set_minor_mode(
-                self._device_id,
-                self._module_id,
-                SetpointMode.MANUAL,
-                True,
-                setpoint_endtime=endtime,
-                setpoint_temp=new_temperature,
-            )
-        elif hvac_mode == HVAC_MODE_AUTO:
-            if self._device.system_mode == SystemMode.FROSTGUARD:
-                await self._client.async_set_system_mode(
-                    self._device_id,
-                    self._module_id,
-                    SystemMode.SUMMER,
-                )
-            else:
+            try:
                 await self._client.async_set_minor_mode(
                     self._device_id,
                     self._module_id,
                     SetpointMode.MANUAL,
-                    False,
+                    True,
+                    setpoint_endtime=endtime,
+                    setpoint_temp=new_temperature,
                 )
+            except ApiException as ex:
+                _LOGGER.exception(ex)
+        elif hvac_mode == HVAC_MODE_AUTO:
+            if self._device.system_mode == SystemMode.FROSTGUARD:
+                try:
+                    await self._client.async_set_system_mode(
+                        self._device_id,
+                        self._module_id,
+                        SystemMode.SUMMER,
+                    )
+                except ApiException as ex:
+                    _LOGGER.exception(ex)
+            else:
+                try:
+                    await self._client.async_set_minor_mode(
+                        self._device_id,
+                        self._module_id,
+                        SetpointMode.MANUAL,
+                        False,
+                    )
+                except ApiException as ex:
+                    _LOGGER.exception(ex)
 
         await self.coordinator.async_request_refresh()
 
@@ -198,31 +210,43 @@ class VaillantClimate(VaillantEntity, ClimateEntity):
             return
 
         if preset_mode == PRESET_AWAY:
-            await self._client.async_set_minor_mode(
-                self._device_id,
-                self._module_id,
-                SetpointMode.AWAY,
-                True,
-            )
+            try:
+                await self._client.async_set_minor_mode(
+                    self._device_id,
+                    self._module_id,
+                    SetpointMode.AWAY,
+                    True,
+                )
+            except ApiException as ex:
+                _LOGGER.exception(ex)
         elif preset_mode == PRESET_HOME:
-            await self._client.async_set_minor_mode(
-                self._device_id,
-                self._module_id,
-                SetpointMode.AWAY,
-                False,
-            )
+            try:
+                await self._client.async_set_minor_mode(
+                    self._device_id,
+                    self._module_id,
+                    SetpointMode.AWAY,
+                    False,
+                )
+            except ApiException as ex:
+                _LOGGER.exception(ex)
         elif preset_mode == PRESET_SUMMER:
-            await self._client.async_set_system_mode(
-                self._device_id,
-                self._module_id,
-                SystemMode.SUMMER,
-            )
+            try:
+                await self._client.async_set_system_mode(
+                    self._device_id,
+                    self._module_id,
+                    SystemMode.SUMMER,
+                )
+            except ApiException as ex:
+                _LOGGER.exception(ex)
         elif preset_mode == PRESET_WINTER:
-            await self._client.async_set_system_mode(
-                self._device_id,
-                self._module_id,
-                SystemMode.WINTER,
-            )
+            try:
+                await self._client.async_set_system_mode(
+                    self._device_id,
+                    self._module_id,
+                    SystemMode.WINTER,
+                )
+            except ApiException as ex:
+                _LOGGER.exception(ex)
 
         await self.coordinator.async_request_refresh()
 
@@ -239,13 +263,16 @@ class VaillantClimate(VaillantEntity, ClimateEntity):
             minutes=self._device.setpoint_default_duration
         )
 
-        await self._client.async_set_minor_mode(
-            self._device_id,
-            self._module_id,
-            SetpointMode.MANUAL,
-            True,
-            setpoint_endtime=endtime,
-            setpoint_temp=new_temperature,
-        )
+        try:
+            await self._client.async_set_minor_mode(
+                self._device_id,
+                self._module_id,
+                SetpointMode.MANUAL,
+                True,
+                setpoint_endtime=endtime,
+                setpoint_temp=new_temperature,
+            )
+        except ApiException as ex:
+            _LOGGER.exception(ex)
 
         await self.coordinator.async_request_refresh()

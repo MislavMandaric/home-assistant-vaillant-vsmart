@@ -14,7 +14,12 @@ from homeassistant.const import (
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResult
-from vaillant_netatmo_api import auth_client, serialize_token
+from vaillant_netatmo_api import (
+    ApiException,
+    RequestClientException,
+    auth_client,
+    serialize_token,
+)
 import voluptuous as vol
 
 from .const import (
@@ -44,12 +49,14 @@ class VaillantFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
         try:
             data = await self._get_config_storage_data(user_input)
-        # except CannotConnect:
-        #     errors["base"] = "cannot_connect"
-        # except InvalidAuth:
-        #     errors["base"] = "invalid_auth"
-        except Exception:  # pylint: disable=broad-except
-            _LOGGER.exception("Unexpected exception")
+        except RequestClientException as ex:
+            _LOGGER.exception(ex)
+            errors["base"] = "invalid_auth"
+        except ApiException as ex:
+            _LOGGER.exception(ex)
+            errors["base"] = "cannot_connect"
+        except Exception as ex:  # pylint: disable=broad-except
+            _LOGGER.exception(ex)
             errors["base"] = "unknown"
 
         if errors:
