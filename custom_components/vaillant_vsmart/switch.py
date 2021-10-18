@@ -8,7 +8,7 @@ from homeassistant.components.switch import SwitchEntity, DEVICE_CLASS_SWITCH
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from vaillant_netatmo_api.thermostat import ApiException, SetpointMode
+from vaillant_netatmo_api import ApiException, SetpointMode
 
 from .const import DOMAIN
 from .entity import VaillantCoordinator, VaillantEntity
