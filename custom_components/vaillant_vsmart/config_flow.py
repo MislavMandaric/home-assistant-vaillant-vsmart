@@ -14,11 +14,13 @@ from homeassistant.const import (
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResult
+from homeassistant.helpers.httpx_client import get_async_client
 from vaillant_netatmo_api import (
     ApiException,
+    AuthClient,
     RequestClientException,
-    auth_client,
-    serialize_token,
+    Token,
+    TokenStore,
 )
 import voluptuous as vol
 
@@ -26,7 +28,6 @@ from .const import (
     CONF_APP_VERSION,
     CONF_USER_PREFIX,
     DOMAIN,
-    SCOPE,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -105,22 +106,29 @@ class VaillantFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     ) -> dict[str, Any]:
         """Get config storage data from user input form data."""
 
-        async with auth_client(
+        token_store = TokenStore(
             user_input[CONF_CLIENT_ID],
             user_input[CONF_CLIENT_SECRET],
-            SCOPE,
-        ) as client:
-            token = await client.async_get_token(
-                user_input[CONF_USERNAME],
-                user_input[CONF_PASSWORD],
-                user_input[CONF_USER_PREFIX],
-                user_input[CONF_APP_VERSION],
-            )
+            None,
+            None,
+        )
 
-            return {
-                CONF_CLIENT_ID: user_input[CONF_CLIENT_ID],
-                CONF_CLIENT_SECRET: user_input[CONF_CLIENT_SECRET],
-                CONF_USER_PREFIX: user_input[CONF_USER_PREFIX],
-                CONF_APP_VERSION: user_input[CONF_APP_VERSION],
-                CONF_TOKEN: serialize_token(token),
-            }
+        client = AuthClient(
+            get_async_client(self.hass),
+            token_store,
+        )
+
+        await client.async_token(
+            user_input[CONF_USERNAME],
+            user_input[CONF_PASSWORD],
+            user_input[CONF_USER_PREFIX],
+            user_input[CONF_APP_VERSION],
+        )
+
+        return {
+            CONF_CLIENT_ID: user_input[CONF_CLIENT_ID],
+            CONF_CLIENT_SECRET: user_input[CONF_CLIENT_SECRET],
+            CONF_USER_PREFIX: user_input[CONF_USER_PREFIX],
+            CONF_APP_VERSION: user_input[CONF_APP_VERSION],
+            CONF_TOKEN: token_store.token.serialize(),
+        }

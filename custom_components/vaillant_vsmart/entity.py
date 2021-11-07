@@ -63,9 +63,6 @@ class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
             _LOGGER.exception(ex)
             raise UpdateFailed(f"Error communicating with API: {ex}")
 
-    async def async_close(self) -> None:
-        await self._client.async_close()
-
 
 class VaillantEntity(CoordinatorEntity[VaillantData]):
     """Base class for Vaillant entities."""
