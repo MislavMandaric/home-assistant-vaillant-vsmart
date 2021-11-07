@@ -6,6 +6,7 @@ import logging
 
 from homeassistant.components.switch import SwitchEntity, DEVICE_CLASS_SWITCH
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import ENTITY_CATEGORY_CONFIG
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from vaillant_netatmo_api import ApiException, SetpointMode
@@ -41,6 +42,12 @@ class VaillantSwitch(VaillantEntity, SwitchEntity):
         """Return the name of the climate."""
 
         return f"{self._module.module_name} {NAME_SUFFIX}"
+
+    @property
+    def entity_category(self) -> str:
+        """Return entity category for this switch."""
+
+        return ENTITY_CATEGORY_CONFIG
 
     @property
     def device_class(self) -> str:
