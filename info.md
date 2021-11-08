@@ -9,9 +9,11 @@
 
 **This component will set up the following platforms.**
 
-| Platform        | Description                         |
-| --------------- | ----------------------------------- |
-| `climate`       | Management of Vaillant thermostat.  |
+| Platform        | Description                                |
+| --------------- | ------------------------------------------ |
+| `climate`       | Management of Vaillant thermostat.         |
+| `switch`        | Hot water boost switch of the thermostat.  |
+| `sensor`        | Battery sensor for the thermostat.         |
 
 {% if not installed %}
 
