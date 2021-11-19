@@ -1,12 +1,4 @@
 {
-    "state_attributes": {
-        "climate": {
-            "preset_mode": {
-                "winter": "Zima",
-                "summer": "Ljeto"
-            }
-        }
-    },
     "config": {
         "step": {
             "user": {
