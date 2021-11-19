@@ -1,7 +1,7 @@
 {
   "domain": "vaillant_vsmart",
   "name": "Vaillant vSMART",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "iot_class": "cloud_polling",
   "documentation": "https://github.com/MislavMandaric/home-assistant-vaillant-vsmart",
   "issue_tracker": "https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/issues",

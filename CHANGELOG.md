@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.1 (2021-11-19)
+### Fix
+* Fixes automated release config. ([`06193b0`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/06193b0f531d7df25f0c06571336f3640ae097bf))
+
 ## v0.1.0 (2021-11-19)
 ### Feature
 * Adds battery level sensor ([`0a89d09`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/0a89d09e86c9c8f38c0e4eafe2f9e68803e33a94))
