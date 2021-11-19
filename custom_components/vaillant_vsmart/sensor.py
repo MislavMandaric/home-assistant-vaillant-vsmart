@@ -16,8 +16,6 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import DOMAIN
 from .entity import VaillantCoordinator, VaillantEntity
 
-NAME_SUFFIX = "battery"
-
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
@@ -29,21 +27,27 @@ async def async_setup_entry(
     coordinator: VaillantCoordinator = hass.data[DOMAIN][entry.entry_id]
 
     new_devices = [
-        VaillantSensor(coordinator, device.id, module.id)
+        VaillantBatterySensor(coordinator, device.id, module.id)
         for device in coordinator.data.devices.values()
         for module in device.modules
     ]
     async_add_devices(new_devices)
 
 
-class VaillantSensor(VaillantEntity, SensorEntity):
+class VaillantBatterySensor(VaillantEntity, SensorEntity):
     """Vaillant vSMART Sensor."""
+
+    @property
+    def unique_id(self) -> str:
+        """Return a unique ID to use for this entity."""
+
+        return self._module.id
 
     @property
     def name(self) -> str:
         """Return the name of the sensor."""
 
-        return f"{self._module.module_name} {NAME_SUFFIX}"
+        return f"{self._module.module_name} Battery"
 
     @property
     def entity_category(self) -> str:
