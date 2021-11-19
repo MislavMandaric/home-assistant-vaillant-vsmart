@@ -1,12 +1,4 @@
 {
-    "state_attributes": {
-        "climate": {
-            "preset_mode": {
-                "winter": "Winter",
-                "summer": "Summer"
-            }
-        }
-    },
     "config": {
         "step": {
             "user": {
