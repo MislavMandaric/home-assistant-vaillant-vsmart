@@ -59,6 +59,12 @@ class VaillantClimate(VaillantEntity, ClimateEntity):
     """Vaillant vSMART Climate."""
 
     @property
+    def unique_id(self) -> str:
+        """Return a unique ID to use for this entity."""
+
+        return self._module.id
+
+    @property
     def name(self) -> str:
         """Return the name of the climate."""
 

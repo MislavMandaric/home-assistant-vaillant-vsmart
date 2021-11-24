@@ -9,7 +9,7 @@ from homeassistant.helpers.update_coordinator import (
     DataUpdateCoordinator,
     UpdateFailed,
 )
-from vaillant_netatmo_api import ApiException, Device, Module, ThermostatClient
+from vaillant_netatmo_api import ApiException, Device, Module, Program, ThermostatClient
 
 from .const import DOMAIN
 
@@ -29,6 +29,12 @@ class VaillantData:
         self.devices = {device.id: device for device in devices}
         self.modules = {
             module.id: module for device in devices for module in device.modules
+        }
+        self.programs = {
+            program.id: program
+            for device in devices
+            for module in device.modules
+            for program in module.therm_program_list
         }
 
 
@@ -59,9 +65,9 @@ class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
             devices = await self._client.async_get_thermostats_data()
 
             return VaillantData(self._client, devices)
-        except ApiException as ex:
-            _LOGGER.exception(ex)
-            raise UpdateFailed(f"Error communicating with API: {ex}")
+        except ApiException as e:
+            _LOGGER.exception(e)
+            raise UpdateFailed(f"Error communicating with API: {e}") from e
 
 
 class VaillantEntity(CoordinatorEntity[VaillantData]):
@@ -72,6 +78,7 @@ class VaillantEntity(CoordinatorEntity[VaillantData]):
         coordinator: DataUpdateCoordinator[VaillantData],
         device_id: str,
         module_id: str,
+        program_id: str = None,
     ):
         """Initialize."""
 
@@ -79,6 +86,7 @@ class VaillantEntity(CoordinatorEntity[VaillantData]):
 
         self._device_id = device_id
         self._module_id = module_id
+        self._program_id = program_id
 
     @property
     def _client(self) -> ThermostatClient:
@@ -99,17 +107,20 @@ class VaillantEntity(CoordinatorEntity[VaillantData]):
         return self.coordinator.data.modules[self._module_id]
 
     @property
-    def unique_id(self) -> str:
-        """Return a unique ID to use for this entity."""
+    def _program(self) -> Program:
+        """Return the program which this entity represents."""
 
-        return self._module.id
+        if self._program_id is None:
+            return None
+
+        return self.coordinator.data.programs[self._program_id]
 
     @property
     def device_info(self) -> dict[str, Any]:
         """Return all device info available for this entity."""
 
         return {
-            "identifiers": {(DOMAIN, self.unique_id)},
+            "identifiers": {(DOMAIN, self._module.id)},
             "name": self._module.module_name,
             "sw_version": self._module.firmware,
             "manufacturer": self._device.type,
