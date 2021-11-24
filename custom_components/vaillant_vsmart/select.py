@@ -57,23 +57,15 @@ class VaillantScheduleSelect(VaillantEntity, SelectEntity):
     def current_option(self) -> str | None:
         """Currently active profile in a schedule."""
 
-        # TODO: Add timezone to now() call
-        now = datetime.datetime.now()
-        offset = now.weekday() * 1440 + int(now.hour) * 60 + int(now.minute)
+        zone_id = self._program.get_active_zone_id()
 
-        profile = None
-        for time_slot in self._program.timetable:
-            if time_slot.m_offset > offset:
-                break
-            profile = time_slot.id
-
-        return str(profile)
+        return zone_id.name
 
     @property
     def options(self) -> list[str]:
         """All profiles available in the schedule."""
 
-        return [str(zone.id) for zone in self._program.zones]
+        return [zone.id.name for zone in self._program.zones]
 
     async def async_select_option(self, option: str) -> None:
         """Select different active profile."""
