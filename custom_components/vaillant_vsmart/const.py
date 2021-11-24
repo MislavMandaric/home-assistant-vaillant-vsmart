@@ -14,3 +14,6 @@ PLATFORMS = [CLIMATE, SWITCH, SENSOR, SELECT]
 # Configuration and options
 CONF_APP_VERSION = "app_version"
 CONF_USER_PREFIX = "user_prefix"
+
+# Websockets
+ATTR_SCHEDULE_ID = "schedule_id"
