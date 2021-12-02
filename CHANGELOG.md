@@ -2,6 +2,20 @@
 
 <!--next-version-placeholder-->
 
+## v0.2.0 (2021-12-02)
+### Feature
+* Adds dummy updated websocket handler ([`7973553`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/7973553ddf734c2855e9b644c8935ff06b4e50ae))
+* Changes websockets to use vaillant vsmart specific domain url ([`e2a4dc5`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/e2a4dc5da92866edfbd7d2535816a427d928d9c9))
+* Adds POC backend for supporting scheduler-card Lovelace cards ([`9f8efef`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/9f8efef8ff74fd7a4311b37f87f0a4c4ab895eb4))
+* Adds profile select entity which shows currently active profile for a schedule ([`273ee17`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/273ee17b4c97d863f0d2f2b7627f594bcf96dba2))
+* Adds switch entity for each schedule defined for a thermostat ([`cf6b108`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/cf6b1084db8b1c9547c710e153e3585c828dc594))
+
+### Fix
+* Changes select schedule entity to type diagnostic ([`1384e45`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/1384e45ee4453cc59ff73286cdc0eaa67342fe1c))
+
+### Documentation
+* Adds credits for people who contributed API docs to readme ([`6b940d4`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/6b940d47910c4ac45576c91815c6110033284cad))
+
 ## v0.1.1 (2021-11-19)
 ### Fix
 * Fixes automated release config. ([`06193b0`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/06193b0f531d7df25f0c06571336f3640ae097bf))
