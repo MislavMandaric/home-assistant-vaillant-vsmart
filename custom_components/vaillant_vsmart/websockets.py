@@ -10,10 +10,11 @@ from homeassistant.components.websocket_api import (
     ActiveConnection,
 )
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
+from homeassistant.helpers.entity_registry import EntityRegistry
 
 from vaillant_netatmo_api.thermostat import Program
 
-from .const import DOMAIN, ATTR_SCHEDULE_ID, SWITCH, SELECT
+from .const import DOMAIN, SWITCH, SELECT
 from .entity import VaillantCoordinator
 from .schedule import map_program_to_schedule
 
@@ -21,58 +22,9 @@ from .schedule import map_program_to_schedule
 _LOGGER = logging.getLogger(__name__)
 
 
-# class SchedulesAddView(HomeAssistantView):
-#     """Login to Home Assistant cloud."""
-
-#     url = "/api/{}/add".format(DOMAIN)
-#     name = "api:{}:add".format(DOMAIN)
-
-#     @RequestDataValidator(const.SCHEDULE_SCHEMA)
-#     async def post(self, request, data):
-#         """Handle config update request."""
-#         hass = request.app["hass"]
-#         coordinator = hass.data[const.DOMAIN]["coordinator"]
-#         coordinator.async_create_schedule(data)
-#         return self.json({"success": True})
-
-
-# class SchedulesEditView(HomeAssistantView):
-#     """Login to Home Assistant cloud."""
-
-#     url = "/api/{}/edit".format(const.DOMAIN)
-#     name = "api:{}:edit".format(const.DOMAIN)
-
-#     @RequestDataValidator(
-#         const.SCHEDULE_SCHEMA.extend({vol.Required(const.ATTR_SCHEDULE_ID): cv.string})
-#     )
-#     async def post(self, request, data):
-#         """Handle config update request."""
-#         hass = request.app["hass"]
-#         coordinator = hass.data[const.DOMAIN]["coordinator"]
-#         schedule_id = data[const.ATTR_SCHEDULE_ID]
-#         del data[const.ATTR_SCHEDULE_ID]
-#         await coordinator.async_edit_schedule(schedule_id, data)
-#         return self.json({"success": True})
-
-
-# class SchedulesRemoveView(HomeAssistantView):
-#     """Login to Home Assistant cloud."""
-
-#     url = "/api/{}/remove".format(const.DOMAIN)
-#     name = "api:{}:remove".format(const.DOMAIN)
-
-#     @RequestDataValidator(vol.Schema({vol.Required(const.ATTR_SCHEDULE_ID): cv.string}))
-#     async def post(self, request, data):
-#         """Handle config update request."""
-#         hass = request.app["hass"]
-#         coordinator = hass.data[const.DOMAIN]["coordinator"]
-#         await coordinator.async_delete_schedule(data[const.ATTR_SCHEDULE_ID])
-#         return self.json({"success": True})
-
-
 @decorators.websocket_command(
     {
-        vol.Required("type"): f"scheduler",
+        vol.Required("type"): f"{DOMAIN}",
     }
 )
 @decorators.async_response
@@ -83,7 +35,7 @@ async def websocket_get_schedules(
 ) -> None:
     """Publish scheduler list data."""
 
-    er = await hass.helpers.entity_registry.async_get_registry()
+    er: EntityRegistry = await hass.helpers.entity_registry.async_get_registry()
 
     schedule: list[dict] = []
     for entry_id in hass.data[DOMAIN].keys():
@@ -101,8 +53,8 @@ async def websocket_get_schedules(
 
 @decorators.websocket_command(
     {
-        vol.Required("type"): f"scheduler/item",
-        vol.Required(ATTR_SCHEDULE_ID): cv.string,
+        vol.Required("type"): f"{DOMAIN}/item",
+        vol.Required("schedule_id"): cv.string,
     }
 )
 @decorators.async_response
@@ -113,12 +65,12 @@ async def websocket_get_schedule_item(
 ) -> None:
     """Publish scheduler list data."""
 
-    er = await hass.helpers.entity_registry.async_get_registry()
+    er: EntityRegistry = await hass.helpers.entity_registry.async_get_registry()
 
     for entry_id in hass.data[DOMAIN].keys():
         coordinator: VaillantCoordinator = hass.data[DOMAIN][entry_id]
 
-        program = coordinator.data.programs.get(msg[ATTR_SCHEDULE_ID])
+        program = coordinator.data.programs.get(msg["schedule_id"])
         if program is not None:
             schedule_entity_id = er.async_get_entity_id(SWITCH, DOMAIN, program.id)
             profile_entity_id = er.async_get_entity_id(SELECT, DOMAIN, program.id)
@@ -131,7 +83,7 @@ async def websocket_get_schedule_item(
 
 @decorators.websocket_command(
     {
-        vol.Required("type"): f"scheduler/tags",
+        vol.Required("type"): f"{DOMAIN}/tags",
     }
 )
 @decorators.async_response
@@ -145,136 +97,7 @@ async def websocket_get_tags(
     connection.send_result(msg["id"], [])
 
 
-# @decorators.websocket_command(
-#     {
-#         vol.Required("type"): f"{DOMAIN}_updated",
-#     }
-# )
-# @decorators.async_response
-# async def handle_subscribe_updates(
-#     hass: HomeAssistant,
-#     connection: ActiveConnection,
-#     msg: dict,
-# ) -> None:
-#     """subscribe listeners when frontend connection is opened"""
-
-#     listeners = []
-
-#     @callback
-#     def async_handle_event_item_created(schedule: ScheduleEntry):
-#         """pass data to frontend when backend changes"""
-#         connection.send_message(
-#             {
-#                 "id": msg["id"],
-#                 "type": "event",
-#                 "event": {  # data to pass with event
-#                     "event": const.EVENT_ITEM_CREATED,
-#                     "schedule_id": schedule.schedule_id,
-#                 },
-#             }
-#         )
-
-#     listeners.append(
-#         async_dispatcher_connect(
-#             hass, const.EVENT_ITEM_CREATED, async_handle_event_item_created
-#         )
-#     )
-
-#     @callback
-#     def async_handle_event_item_updated(schedule_id: str):
-#         """pass data to frontend when backend changes"""
-#         connection.send_message(
-#             {
-#                 "id": msg["id"],
-#                 "type": "event",
-#                 "event": {  # data to pass with event
-#                     "event": const.EVENT_ITEM_UPDATED,
-#                     "schedule_id": schedule_id,
-#                 },
-#             }
-#         )
-
-#     listeners.append(
-#         async_dispatcher_connect(
-#             hass, const.EVENT_ITEM_UPDATED, async_handle_event_item_updated
-#         )
-#     )
-
-#     @callback
-#     def async_handle_event_item_removed(schedule_id: str):
-#         """pass data to frontend when backend changes"""
-#         connection.send_message(
-#             {
-#                 "id": msg["id"],
-#                 "type": "event",
-#                 "event": {  # data to pass with event
-#                     "event": const.EVENT_ITEM_REMOVED,
-#                     "schedule_id": schedule_id,
-#                 },
-#             }
-#         )
-
-#     listeners.append(
-#         async_dispatcher_connect(
-#             hass, const.EVENT_ITEM_REMOVED, async_handle_event_item_removed
-#         )
-#     )
-
-#     @callback
-#     def async_handle_event_timer_updated(schedule_id: str):
-#         """pass data to frontend when backend changes"""
-#         connection.send_message(
-#             {
-#                 "id": msg["id"],
-#                 "type": "event",
-#                 "event": {  # data to pass with event
-#                     "event": const.EVENT_TIMER_UPDATED,
-#                     "schedule_id": schedule_id,
-#                 },
-#             }
-#         )
-
-#     listeners.append(
-#         async_dispatcher_connect(
-#             hass, const.EVENT_TIMER_UPDATED, async_handle_event_timer_updated
-#         )
-#     )
-
-#     @callback
-#     def async_handle_event_timer_finished(schedule_id: str):
-#         """pass data to frontend when backend changes"""
-#         connection.send_message(
-#             {
-#                 "id": msg["id"],
-#                 "type": "event",
-#                 "event": {  # data to pass with event
-#                     "event": const.EVENT_TIMER_FINISHED,
-#                     "schedule_id": schedule_id,
-#                 },
-#             }
-#         )
-
-#     listeners.append(
-#         async_dispatcher_connect(
-#             hass, const.EVENT_TIMER_FINISHED, async_handle_event_timer_finished
-#         )
-#     )
-
-#     def unsubscribe_listeners():
-#         """unsubscribe listeners when frontend connection closes"""
-#         while len(listeners):
-#             listeners.pop()()
-
-#     connection.subscriptions[msg["id"]] = unsubscribe_listeners
-#     connection.send_result(msg["id"])
-
-
 async def async_register_websockets(hass: HomeAssistant) -> None:
-    # hass.http.register_view(SchedulesAddView)
-    # hass.http.register_view(SchedulesEditView)
-    # hass.http.register_view(SchedulesRemoveView)
-
     hass.components.websocket_api.async_register_command(websocket_get_schedules)
     hass.components.websocket_api.async_register_command(websocket_get_schedule_item)
     hass.components.websocket_api.async_register_command(websocket_get_tags)
-    # hass.components.websocket_api.async_register_command(handle_subscribe_updates)
