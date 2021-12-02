@@ -57,6 +57,8 @@ Code template was mainly taken from [@Ludeeus](https://github.com/ludeeus)'s [in
 
 This integration is a complete rewrite of [@pjmaenh](https://github.com/pjmaenh)'s original [Vaillant integration](https://github.com/pjmaenh/home-assistant-vaillant).
 
+Thanks to [@philippelt](https://github.com/philippelt), [@jabesq](https://github.com/jabesq), [@samueldumont](https://github.com/samueldumont), [@jabesq](https://github.com/jabesq), [@pjmaenh](https://github.com/pjmaenh) and [@superbunika](https://github.com/superbunika) for providing many details of the underlying API, which this component uses.
+
 
 [maintainer]: https://github.com/MislavMandaric
 [maintainer-shield]: https://img.shields.io/badge/maintainer-%40MislavMandaric-blue.svg?style=for-the-badge

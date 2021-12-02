@@ -18,11 +18,15 @@ from .const import (
 )
 from .entity import VaillantCoordinator
 
+from .websockets import async_register_websockets
+
 
 async def async_setup(hass: HomeAssistant, config: Config) -> bool:
     """Set up Vaillant vSMART component."""
 
     hass.data.setdefault(DOMAIN, {})
+
+    await async_register_websockets(hass)
 
     return True
 
