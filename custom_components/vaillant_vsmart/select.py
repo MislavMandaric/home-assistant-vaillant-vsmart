@@ -6,7 +6,7 @@ import logging
 
 from homeassistant.components.select import SelectEntity
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import ENTITY_CATEGORY_CONFIG
+from homeassistant.const import ENTITY_CATEGORY_DIAGNOSTIC
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
@@ -49,9 +49,9 @@ class VaillantScheduleSelect(VaillantEntity, SelectEntity):
 
     @property
     def entity_category(self) -> str:
-        """Return entity category for this switch."""
+        """Return entity category for this select."""
 
-        return ENTITY_CATEGORY_CONFIG
+        return ENTITY_CATEGORY_DIAGNOSTIC
 
     @property
     def current_option(self) -> str | None:
