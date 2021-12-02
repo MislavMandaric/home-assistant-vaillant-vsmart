@@ -83,6 +83,22 @@ async def websocket_get_schedule_item(
 
 @decorators.websocket_command(
     {
+        vol.Required("type"): f"{DOMAIN}_updated",
+    }
+)
+@decorators.async_response
+async def websocket_schedule_item_updated(
+    hass: HomeAssistant,
+    connection: ActiveConnection,
+    msg: dict,
+) -> None:
+    """Publish scheduler list data."""
+
+    connection.send_result(msg["id"])
+
+
+@decorators.websocket_command(
+    {
         vol.Required("type"): f"{DOMAIN}/tags",
     }
 )
@@ -100,4 +116,7 @@ async def websocket_get_tags(
 async def async_register_websockets(hass: HomeAssistant) -> None:
     hass.components.websocket_api.async_register_command(websocket_get_schedules)
     hass.components.websocket_api.async_register_command(websocket_get_schedule_item)
+    hass.components.websocket_api.async_register_command(
+        websocket_schedule_item_updated
+    )
     hass.components.websocket_api.async_register_command(websocket_get_tags)
