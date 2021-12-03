@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.2.1 (2021-12-03)
+### Fix
+* Fixes crash when schedule contains custom profile ([`42449fd`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/42449fd36a0727a613aa933c6195ac6a3b56fd26))
+
 ## v0.2.0 (2021-12-02)
 ### Feature
 * Adds dummy updated websocket handler ([`7973553`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/7973553ddf734c2855e9b644c8935ff06b4e50ae))
