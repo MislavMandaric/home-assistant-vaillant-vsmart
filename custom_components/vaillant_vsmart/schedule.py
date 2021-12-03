@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from vaillant_netatmo_api.thermostat import Program, TimeSlot
+from vaillant_netatmo_api.thermostat import Program, TimeSlot, Zone
 
 
 def map_program_to_schedule(
@@ -11,7 +11,11 @@ def map_program_to_schedule(
     return {
         "schedule_id": program.id,
         "weekdays": ["daily"],
-        "timeslots": map_timetable_to_timeslots(profile_entity_id, daily_slots),
+        "timeslots": map_timetable_to_timeslots(
+            profile_entity_id,
+            daily_slots,
+            program.zones,
+        ),
         "repeat_type": "repeat",
         "name": program.name,
         "enabled": program.selected,
@@ -53,11 +57,18 @@ def map_timetable_to_next_entries(timetable: list[TimeSlot]) -> list[int]:
 
 
 def map_timetable_to_timeslots(
-    profile_entity_id: str, timetable: list[TimeSlot]
+    profile_entity_id: str,
+    timetable: list[TimeSlot],
+    zones: list[Zone],
 ) -> list[dict]:
     r = []
 
     for i, time_slot in enumerate(timetable):
+        zone_name = ""
+        for zone in zones:
+            if zone.id == time_slot.id:
+                zone_name = zone.name
+
         next_time_slot = timetable[(i + 1) % len(timetable)]
         r.append(
             {
@@ -67,7 +78,7 @@ def map_timetable_to_timeslots(
                     {
                         "service": "select.select_option",
                         "entity_id": profile_entity_id,
-                        "service_data": {"option": time_slot.id.name},
+                        "service_data": {"option": zone_name},
                     }
                 ],
             }
