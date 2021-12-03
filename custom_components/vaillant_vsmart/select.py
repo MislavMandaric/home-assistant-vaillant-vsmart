@@ -57,15 +57,18 @@ class VaillantScheduleSelect(VaillantEntity, SelectEntity):
     def current_option(self) -> str | None:
         """Currently active profile in a schedule."""
 
-        zone_id = self._program.get_active_zone_id()
+        zone = self._program.get_active_zone()
 
-        return zone_id.name
+        if zone:
+            return zone.name
+
+        return None
 
     @property
     def options(self) -> list[str]:
         """All profiles available in the schedule."""
 
-        return [zone.id.name for zone in self._program.zones]
+        return [zone.name for zone in self._program.zones]
 
     async def async_select_option(self, option: str) -> None:
         """Select different active profile."""
