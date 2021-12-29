@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.2.2 (2021-12-29)
+### Fix
+* Adds debug logging to the climate entity when writing to HA state. ([`29a4e4a`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/29a4e4a3f1f19fda2f611b79ebd0a0e1a5ca87a9))
+
 ## v0.2.1 (2021-12-03)
 ### Fix
 * Fixes crash when schedule contains custom profile ([`42449fd`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/42449fd36a0727a613aa933c6195ac6a3b56fd26))
