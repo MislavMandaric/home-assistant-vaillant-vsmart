@@ -282,3 +282,11 @@ class VaillantClimate(VaillantEntity, ClimateEntity):
             _LOGGER.exception(ex)
 
         await self.coordinator.async_request_refresh()
+
+    def async_write_ha_state(self) -> None:
+        """Add logging to the write state climate entity method."""
+
+        _LOGGER.debug(
+            f"Writing climate state to HA, current temperature: {self._module.measured.temperature}"
+        )
+        super().async_write_ha_state()
