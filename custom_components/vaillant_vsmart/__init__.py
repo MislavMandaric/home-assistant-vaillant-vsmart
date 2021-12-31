@@ -44,8 +44,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     client_secret = entry.data.get(CONF_CLIENT_SECRET)
     token = Token.deserialize(entry.data.get(CONF_TOKEN))
 
+    c = get_async_client(hass)
+    c.headers.update({"Cache-Control": "no-store"})
+
     client = ThermostatClient(
-        get_async_client(hass),
+        c,
         TokenStore(client_id, client_secret, token, handle_token_update),
     )
 
