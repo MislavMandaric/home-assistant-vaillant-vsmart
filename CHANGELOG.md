@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.2.4 (2022-01-02)
+### Fix
+* Updates library to new version which contains cache control updates ([`99f944c`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/99f944c34f0e8b00f0fbf9dba7ffed4462730c42))
+
 ## v0.2.3 (2021-12-31)
 ### Fix
 * Adds no-cache cache control header to all http requests to Vaillant API. ([`f6a1235`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/f6a12352d9c9602012d7a8ded8ed425f802fa08b))
