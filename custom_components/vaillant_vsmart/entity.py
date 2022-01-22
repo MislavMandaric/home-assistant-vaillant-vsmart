@@ -1,5 +1,6 @@
 """Vaillant vSMART entity classes."""
-from datetime import timedelta
+import asyncio
+from datetime import datetime, timedelta
 import logging
 from typing import Any
 
@@ -9,7 +10,16 @@ from homeassistant.helpers.update_coordinator import (
     DataUpdateCoordinator,
     UpdateFailed,
 )
-from vaillant_netatmo_api import ApiException, Device, Module, Program, ThermostatClient
+from vaillant_netatmo_api import (
+    ApiException,
+    Device,
+    Module,
+    Program,
+    ThermostatClient,
+    MeasurementItem,
+    MeasurementType,
+    MeasurementScale,
+)
 
 from .const import DOMAIN
 
@@ -64,10 +74,70 @@ class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
         try:
             devices = await self._client.async_get_thermostats_data()
 
+            measurements = await self._get_temperature_measurements_for_all_devices(
+                devices
+            )
+
+            self._update_measured_data(devices, measurements)
+
             return VaillantData(self._client, devices)
         except ApiException as e:
             _LOGGER.exception(e)
             raise UpdateFailed(f"Error communicating with API: {e}") from e
+
+    async def _get_temperature_measurements_for_all_devices(
+        self, devices: list[Device]
+    ) -> list[list[MeasurementItem]]:
+        temperature_tasks = []
+
+        start_time = datetime.now() - timedelta(minutes=30)
+
+        for device in devices:
+            for module in device.modules:
+                current_temp_task = self._client.async_get_measure(
+                    device.id,
+                    module.id,
+                    MeasurementType.TEMPERATURE,
+                    MeasurementScale.MAX,
+                    start_time,
+                )
+                temperature_tasks.append(current_temp_task)
+
+                setpoint_temp_task = self._client.async_get_measure(
+                    device.id,
+                    module.id,
+                    MeasurementType.SETPOINT_TEMPERATURE,
+                    MeasurementScale.MAX,
+                    start_time,
+                )
+                temperature_tasks.append(setpoint_temp_task)
+
+        return await asyncio.gather(*temperature_tasks)
+
+    def _update_measured_data(
+        self, devices: list[Device], measurements: list[list[MeasurementItem]]
+    ) -> None:
+        i = 0
+
+        for device in devices:
+            for module in device.modules:
+                module.measured.temperature = self._get_measurement_value(
+                    measurements[i], module.measured.temperature
+                )
+                module.measured.setpoint_temp = self._get_measurement_value(
+                    measurements[i + 1], module.measured.setpoint_temp
+                )
+
+                i += 2
+
+    def _get_measurement_value(
+        self,
+        measurements: list[MeasurementItem],
+        default_value: float,
+    ) -> float:
+        measure = measurements[-1] if measurements else None
+
+        return measure.value[-1] if measure and measure.value else default_value
 
 
 class VaillantEntity(CoordinatorEntity[VaillantData]):
