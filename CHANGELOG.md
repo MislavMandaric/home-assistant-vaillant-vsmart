@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.3.0 (2022-01-22)
+### Feature
+* Adds getting temperature data from real time measure API ([`e89a3f0`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/e89a3f05fb6f69c3a4948ef32193f2cd30d1992c))
+
 ## v0.2.4 (2022-01-02)
 ### Fix
 * Updates library to new version which contains cache control updates ([`99f944c`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/99f944c34f0e8b00f0fbf9dba7ffed4462730c42))
