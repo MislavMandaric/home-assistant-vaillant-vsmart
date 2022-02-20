@@ -92,7 +92,7 @@ class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
     ) -> list[list[MeasurementItem]]:
         temperature_tasks = []
 
-        start_time = datetime.now() - timedelta(minutes=30)
+        start_time = datetime.now() - timedelta(hours=1)
 
         for device in devices:
             for module in device.modules:
