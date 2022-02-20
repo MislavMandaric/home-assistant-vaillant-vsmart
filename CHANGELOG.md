@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v0.4.0 (2022-02-20)
+### Feature
+* Changes start time for measure api to 1h instead of 30mins ([`d7a3daa`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/d7a3daaa89bbf7b7562cf5e9ed23c0b5e999e565))
+* Adds debug log for changes of temp measurements ([`cfc81b6`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/cfc81b6bacad69f169c0864b92aadcd5faa38586))
+
 ## v0.3.0 (2022-01-22)
 ### Feature
 * Adds getting temperature data from real time measure API ([`e89a3f0`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/e89a3f05fb6f69c3a4948ef32193f2cd30d1992c))
