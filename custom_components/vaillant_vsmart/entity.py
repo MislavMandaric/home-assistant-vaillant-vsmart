@@ -78,7 +78,9 @@ class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
                 devices
             )
 
+            self._debug_log(devices)
             self._update_measured_data(devices, measurements)
+            self._debug_log(devices)
 
             return VaillantData(self._client, devices)
         except ApiException as e:
@@ -90,7 +92,7 @@ class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
     ) -> list[list[MeasurementItem]]:
         temperature_tasks = []
 
-        start_time = datetime.now() - timedelta(minutes=30)
+        start_time = datetime.now() - timedelta(hours=1)
 
         for device in devices:
             for module in device.modules:
@@ -113,6 +115,12 @@ class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
                 temperature_tasks.append(setpoint_temp_task)
 
         return await asyncio.gather(*temperature_tasks)
+
+    def _debug_log(self, devices: list[Device]) -> None:
+        for device in devices:
+            for module in device.modules:
+                _LOGGER.debug(f"_temperature_: {module.measured.temperature}")
+                _LOGGER.debug(f"setpoint_temp: {module.measured.setpoint_temp}")
 
     def _update_measured_data(
         self, devices: list[Device], measurements: list[list[MeasurementItem]]
