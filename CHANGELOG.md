@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.4.1 (2022-04-08)
+### Fix
+* Fixes issue when comparing temperatures in case setpoint temperature is not set, like in summer mode ([`a00ead5`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/a00ead5ee6d36677eca84885d97160bc0b6c2a5c))
+* Removes custom title translation for configuring the integration through the UI ([`bb471f4`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/bb471f40ba42ffeab072b4964619a9b34cc45910))
+* Replaces deprecated entity config consts with new enum with the same purpose ([`ef18d97`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/ef18d97db6741b2ec768c22a85799c65196b12b1))
+
 ## v0.4.0 (2022-02-20)
 ### Feature
 * Changes start time for measure api to 1h instead of 30mins ([`d7a3daa`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/d7a3daaa89bbf7b7562cf5e9ed23c0b5e999e565))
