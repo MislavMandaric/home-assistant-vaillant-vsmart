@@ -1,13 +1,12 @@
 """The Vaillant vSMART climate platform."""
 from __future__ import annotations
 
-import datetime
 import logging
 
 from homeassistant.components.select import SelectEntity
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import ENTITY_CATEGORY_DIAGNOSTIC
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
@@ -48,10 +47,10 @@ class VaillantScheduleSelect(VaillantEntity, SelectEntity):
         return f"{self._module.module_name} {self._program.name} Profile"
 
     @property
-    def entity_category(self) -> str:
+    def entity_category(self) -> EntityCategory:
         """Return entity category for this select."""
 
-        return ENTITY_CATEGORY_DIAGNOSTIC
+        return EntityCategory.DIAGNOSTIC
 
     @property
     def current_option(self) -> str | None:
