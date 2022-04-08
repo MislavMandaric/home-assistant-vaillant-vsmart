@@ -7,7 +7,7 @@
       "name": "Python: Attach Local",
       "type": "python",
       "request": "attach",
-      "port": 5678,
+      "port": 8123,
       "host": "localhost",
       "justMyCode": false,
       "pathMappings": [
@@ -22,7 +22,7 @@
       "name": "Python: Attach Remote",
       "type": "python",
       "request": "attach",
-      "port": 5678,
+      "port": 8123,
       "host": "homeassistant.local",
       "justMyCode": false,
       "pathMappings": [
