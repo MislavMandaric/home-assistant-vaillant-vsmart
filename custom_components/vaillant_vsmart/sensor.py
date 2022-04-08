@@ -9,8 +9,9 @@ from homeassistant.components.sensor import (
     STATE_CLASS_MEASUREMENT,
 )
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import ENTITY_CATEGORY_DIAGNOSTIC, PERCENTAGE
+from homeassistant.const import PERCENTAGE
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
@@ -50,10 +51,10 @@ class VaillantBatterySensor(VaillantEntity, SensorEntity):
         return f"{self._module.module_name} Battery"
 
     @property
-    def entity_category(self) -> str:
+    def entity_category(self) -> EntityCategory:
         """Return entity category for this sensor."""
 
-        return ENTITY_CATEGORY_DIAGNOSTIC
+        return EntityCategory.DIAGNOSTIC
 
     @property
     def device_class(self) -> str:
