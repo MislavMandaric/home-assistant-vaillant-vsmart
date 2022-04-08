@@ -2,7 +2,6 @@
     "config": {
         "step": {
             "user": {
-                "title": "Vaillant vSMART",
                 "description": "If you need help with the configuration have a look here: https://github.com/MislavMandaric/home-assistant-vaillant-vsmart",
                 "data": {
                     "client_id": "Client ID",

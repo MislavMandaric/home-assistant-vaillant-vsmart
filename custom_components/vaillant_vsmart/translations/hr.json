@@ -2,7 +2,6 @@
     "config": {
         "step": {
             "user": {
-                "title": "Vaillant vSMART",
                 "description": "Pomoć oko konfiguracije integracije potražite na ovom linku: https://github.com/MislavMandaric/home-assistant-vaillant-vsmart",
                 "data": {
                     "client_id": "ID klijenta",
