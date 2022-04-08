@@ -123,8 +123,11 @@ class VaillantClimate(VaillantEntity, ClimateEntity):
         if self._device.system_mode == SystemMode.FROSTGUARD:
             return CURRENT_HVAC_OFF
 
-        if self._module.measured.temperature < self._module.measured.setpoint_temp:
-            return CURRENT_HVAC_HEAT
+        try:
+            if self._module.measured.temperature < self._module.measured.setpoint_temp:
+                return CURRENT_HVAC_HEAT
+        except TypeError as ex:
+            _LOGGER.exception(ex)
 
         return CURRENT_HVAC_IDLE
 
