@@ -43,6 +43,44 @@
 
 ## Configuration is done in the UI
 
+### Informations to add in the integration
+
+For Vaillant Vsmart
+- Client ID : na_client_android_vaillant
+- Client secret : 929XXXXXXXXXXXXXXXX45f0 (see below)
+- Username : MY_VAILLANT_APP_USERNAME
+- Password : MY_VAILLANT_APP_PWD
+- User prefix : vaillant
+- App version : 1.0.4.0
+
+For MiGo
+- Client ID : na_client_android_sdbg
+- Client secret : 28d36XXXXXXXXXXXXffeb (see below)
+- Username : MY_MIGO_APP_USERNAME
+- Password : MY_MIGO_APP_PWD
+- User prefix : sdbg
+- App version : 1.3.0.4
+
+### Finding secret key:
+
+You can ask this thread for additional support if you can't find the key : https://community.home-assistant.io/t/added-support-for-vaillant-thermostat-how-to-integrate-in-official-release
+
+For Vaillant :
+- Download this app (do not install!) : https://m.apkpure.com/vaillant-vsmart-control/com.vaillantgroup.vaillant.thermostat/download/3100400-APK
+- Change the extension from .apk to .zip (if you don’t see the extension you need to enable the option in windows explorer
+- Unzip the file
+- Rename classes.dex to classes.txt
+- Open the file with an editor such as Notepad++, VS code or Wordpad (it is too big for notepad)
+- Search for the string “45f0”
+- The secret key is the line starting by 929 and ending by 45f0
+
+For Migo :
+- Download this app (do not install!) : https://apkpure.com/migo-your-heating-assistant/com.vaillantgroup.migo.thermostat
+- If this is an xapk file just rename it .zip and uncompress it with winzip you will obtain the apk
+- Disassemble the apk with your favorite tool. I took google android sdk
+- When disassembling work is done search for na_client_android_sdbg
+- You will find the KEY of the form : 28d36#######################ffeb. (32 Characters)
+
 <!---->
 
 ## Contributions are welcome!
