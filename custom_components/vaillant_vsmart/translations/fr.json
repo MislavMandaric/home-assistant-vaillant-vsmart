@@ -1,0 +1,24 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "description": "Si vous souhaitez d'avantage d'informations pour réaliser la configuration, veuillez consulter ce site (en anglais) : https://github.com/MislavMandaric/home-assistant-vaillant-vsmart",
+                "data": {
+                    "client_id": "Identification du client",
+                    "client_secret": "Clé secrète du client",
+                    "username": "Nom d'utilisateur",
+                    "password": "Mot de passe utilisateur",
+                    "user_prefix": "Préfixe utilisateur",
+                    "app_version": "Version de l'application"
+                }
+            }
+        },
+        "error": {
+            "unknown": "Erreur d'authentification à l'API."
+        },
+        "abort": {
+            "already_in_progress": "L'intégration de cet utilisateur est déjà en cours.",
+            "already_configured": "L'intégration de cet utilisateur est déjà configurée."
+        }
+    }
+}
