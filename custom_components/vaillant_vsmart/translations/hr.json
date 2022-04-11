@@ -2,7 +2,18 @@
     "config": {
         "step": {
             "user": {
-                "description": "Pomoć oko konfiguracije integracije potražite na ovom linku: https://github.com/MislavMandaric/home-assistant-vaillant-vsmart",
+                "description": "Više informacija o postavkama komponente možete pronaći na [stranicama zajednice](https://community.home-assistant.io/t/added-support-for-vaillant-thermostat-how-to-integrate-in-official-release/31858), uključujući i način na koji možete saznati ID i tajni kod klijenta.",
+                "data": {
+                    "client_id": "ID klijenta",
+                    "client_secret": "Tajni kod klijenta",
+                    "username": "Korisničko ime",
+                    "password": "Lozinka",
+                    "user_prefix": "Korisnički prefiks",
+                    "app_version": "Verzija aplikacije"
+                }
+            },
+            "reauth": {
+                "description": "Tokeni za komunikaciju koje komponenta koristi su istekli i potrebna je ponovna autentikacija. Korisničko ime i lozinka se ne spremaju te ih je potrebno ponovno unijeti.",
                 "data": {
                     "client_id": "ID klijenta",
                     "client_secret": "Tajni kod klijenta",
@@ -14,11 +25,14 @@
             }
         },
         "error": {
-            "unknown": "Došlo je do pogreške u komunikaciji sa serverom."
+            "invalid_auth": "Pogreška prilikom autentikacije",
+            "cannot_connect": "Pogreška u spajanju",
+            "unknown": "Neočekivana pogreška"
         },
         "abort": {
-            "already_in_progress": "Integracija je već u tijeku.",
-            "already_configured": "Integracija je već postavljena."
+            "reauth_successful": "Uspješna ponovna autentikacija.",
+            "already_in_progress": "Konfiguracija je već u tijeku.",
+            "already_configured": "Račun je otprije konfiguriran."
         }
     }
 }
