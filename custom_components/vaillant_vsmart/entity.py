@@ -5,6 +5,7 @@ import logging
 from typing import Any
 
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
     DataUpdateCoordinator,
@@ -19,6 +20,7 @@ from vaillant_netatmo_api import (
     MeasurementItem,
     MeasurementType,
     MeasurementScale,
+    RequestUnauthorizedException,
 )
 
 from .const import DOMAIN
@@ -83,9 +85,11 @@ class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
             self._debug_log(devices)
 
             return VaillantData(self._client, devices)
-        except ApiException as e:
-            _LOGGER.exception(e)
-            raise UpdateFailed(f"Error communicating with API: {e}") from e
+        except RequestUnauthorizedException as ex:
+            raise ConfigEntryAuthFailed from ex
+        except ApiException as ex:
+            _LOGGER.exception(ex)
+            raise UpdateFailed(f"Error communicating with API: {ex}") from ex
 
     async def _get_temperature_measurements_for_all_devices(
         self, devices: list[Device]
