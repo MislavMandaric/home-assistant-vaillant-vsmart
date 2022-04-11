@@ -126,8 +126,8 @@ class VaillantClimate(VaillantEntity, ClimateEntity):
         try:
             if self._module.measured.temperature < self._module.measured.setpoint_temp:
                 return CURRENT_HVAC_HEAT
-        except TypeError as ex:
-            _LOGGER.exception(ex)
+        except TypeError:
+            pass
 
         return CURRENT_HVAC_IDLE
 
@@ -155,7 +155,7 @@ class VaillantClimate(VaillantEntity, ClimateEntity):
     async def async_set_hvac_mode(self, hvac_mode: str) -> None:
         """Select new HVAC operation mode."""
 
-        _LOGGER.debug(f"Setting HVAC mode to: {hvac_mode}")
+        _LOGGER.debug("Setting HVAC mode to: %s", hvac_mode)
 
         if hvac_mode == HVAC_MODE_OFF:
             try:
@@ -213,7 +213,7 @@ class VaillantClimate(VaillantEntity, ClimateEntity):
     async def async_set_preset_mode(self, preset_mode: str) -> None:
         """Select new HVAC preset mode."""
 
-        _LOGGER.debug(f"Setting HVAC preset mode to: {preset_mode}")
+        _LOGGER.debug("Setting HVAC preset mode to: %s", preset_mode)
 
         if self._device.system_mode == SystemMode.FROSTGUARD:
             return
@@ -266,7 +266,7 @@ class VaillantClimate(VaillantEntity, ClimateEntity):
         if new_temperature is None:
             return
 
-        _LOGGER.debug(f"Setting target temperature to: {new_temperature}")
+        _LOGGER.debug("Setting target temperature to: %s", new_temperature)
 
         endtime = datetime.datetime.now() + datetime.timedelta(
             minutes=self._device.setpoint_default_duration

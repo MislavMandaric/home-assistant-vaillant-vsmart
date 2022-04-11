@@ -12,14 +12,12 @@ from homeassistant.const import (
     CONF_TOKEN,
     CONF_USERNAME,
 )
-from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers.httpx_client import get_async_client
 from vaillant_netatmo_api import (
     ApiException,
     AuthClient,
     RequestClientException,
-    Token,
     TokenStore,
 )
 import voluptuous as vol
@@ -43,8 +41,23 @@ class VaillantFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     ) -> FlowResult:
         """Handle a flow initialized by the user."""
 
+        return await self._async_step_all("user", "already_configured", user_input)
+
+    async def async_step_reauth(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Handle a reauth flow initialized when token used for API requests is invalid."""
+
+        return await self._async_step_all("reauth", "reauth_successful", user_input)
+
+    async def _async_step_all(
+        self, step_id: str, abort_reason: str, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Generic flow step that handles both user and reauth steps."""
+
         if user_input is None:
-            return await self._show_config_form()
+            user_input = self._init_user_input()
+            return self._show_config_form(step_id, user_input)
 
         errors = {}
 
@@ -61,20 +74,26 @@ class VaillantFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             errors["base"] = "unknown"
 
         if errors:
-            return await self._show_config_form(user_input, errors)
+            return self._show_config_form(step_id, user_input, errors)
 
-        await self.async_set_unique_id(user_input[CONF_USERNAME])
-        self._abort_if_unique_id_configured()
+        existing_entry = await self.async_set_unique_id(user_input[CONF_USERNAME])
+        if existing_entry:
+            self.hass.config_entries.async_update_entry(existing_entry, data=data)
+            await self.hass.config_entries.async_reload(existing_entry.entry_id)
+            return self.async_abort(reason=abort_reason)
 
         return self.async_create_entry(title=user_input[CONF_USERNAME], data=data)
 
-    async def _show_config_form(
-        self, user_input: dict[str, Any] = {}, errors: dict[str, str] = None
-    ):
+    def _show_config_form(
+        self,
+        step_id: str,
+        user_input: dict[str, Any],
+        errors: dict[str, str] = None,
+    ) -> FlowResult:
         """Show the configuration form to edit location data."""
 
         return self.async_show_form(
-            step_id="user",
+            step_id=step_id,
             data_schema=vol.Schema(
                 {
                     vol.Required(
@@ -101,14 +120,29 @@ class VaillantFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             errors=errors,
         )
 
+    def _init_user_input(self) -> dict[str, Any]:
+        """Initializes user input data from configs init data."""
+
+        data = self.init_data
+
+        if data is None:
+            return {}
+
+        return {
+            CONF_CLIENT_ID: data.get(CONF_CLIENT_ID),
+            CONF_CLIENT_SECRET: data.get(CONF_CLIENT_SECRET),
+            CONF_USER_PREFIX: data.get(CONF_USER_PREFIX),
+            CONF_APP_VERSION: data.get(CONF_APP_VERSION),
+        }
+
     async def _get_config_storage_data(
         self, user_input: dict[str, Any]
     ) -> dict[str, Any]:
         """Get config storage data from user input form data."""
 
         token_store = TokenStore(
-            user_input[CONF_CLIENT_ID],
-            user_input[CONF_CLIENT_SECRET],
+            user_input.get(CONF_CLIENT_ID),
+            user_input.get(CONF_CLIENT_SECRET),
             None,
             None,
         )
@@ -119,16 +153,16 @@ class VaillantFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
         await client.async_token(
-            user_input[CONF_USERNAME],
-            user_input[CONF_PASSWORD],
-            user_input[CONF_USER_PREFIX],
-            user_input[CONF_APP_VERSION],
+            user_input.get(CONF_USERNAME),
+            user_input.get(CONF_PASSWORD),
+            user_input.get(CONF_USER_PREFIX),
+            user_input.get(CONF_APP_VERSION),
         )
 
         return {
-            CONF_CLIENT_ID: user_input[CONF_CLIENT_ID],
-            CONF_CLIENT_SECRET: user_input[CONF_CLIENT_SECRET],
-            CONF_USER_PREFIX: user_input[CONF_USER_PREFIX],
-            CONF_APP_VERSION: user_input[CONF_APP_VERSION],
+            CONF_CLIENT_ID: user_input.get(CONF_CLIENT_ID),
+            CONF_CLIENT_SECRET: user_input.get(CONF_CLIENT_SECRET),
+            CONF_USER_PREFIX: user_input.get(CONF_USER_PREFIX),
+            CONF_APP_VERSION: user_input.get(CONF_APP_VERSION),
             CONF_TOKEN: token_store.token.serialize(),
         }

@@ -2,7 +2,18 @@
     "config": {
         "step": {
             "user": {
-                "description": "If you need help with the configuration have a look here: https://github.com/MislavMandaric/home-assistant-vaillant-vsmart",
+                "description": "If you're setting the component for the first time and need some guidelines, check out the [community page](https://community.home-assistant.io/t/added-support-for-vaillant-thermostat-how-to-integrate-in-official-release/31858). You can find out how to extract client ID and client secret there.",
+                "data": {
+                    "client_id": "Client ID",
+                    "client_secret": "Client secret",
+                    "username": "Username",
+                    "password": "Password",
+                    "user_prefix": "User prefix",
+                    "app_version": "App version"
+                }
+            },
+            "reauth": {
+                "description": "Tokens used by the component expired and you need to re-authenticate with the API again. Since your credentials are never stored, you need to enter them again.",
                 "data": {
                     "client_id": "Client ID",
                     "client_secret": "Client secret",
@@ -14,11 +25,14 @@
             }
         },
         "error": {
-            "unknown": "Something went wrong when authenticating with the API."
+            "invalid_auth": "[%key:common::config_flow::error::invalid_auth%]",
+            "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
+            "unknown": "[%key:common::config_flow::error::unknown%]"
         },
         "abort": {
-            "already_in_progress": "Integration for provided user is already in progress.",
-            "already_configured": "Integration for provided user is already configured."
+            "reauth_successful": "[%key:common::config_flow::abort::reauth_successful%]",
+            "already_in_progress": "[%key:common::config_flow::abort::already_in_progress%]",
+            "already_configured": "[%key:common::config_flow::abort::already_configured_account%]"
         }
     }
 }
