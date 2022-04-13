@@ -47,7 +47,7 @@ Check out the [community page](https://community.home-assistant.io/t/added-suppo
 
 For Vaillant Vsmart
 - Client ID : na_client_android_vaillant
-- Client secret : 929XXXXXXXXXXXXXXXX45f0 (see above)
+- Client secret : XXXXXXXXXXXXXXXXXXXXXXX (see above)
 - Username : MY_VAILLANT_APP_USERNAME
 - Password : MY_VAILLANT_APP_PWD
 - User prefix : vaillant
@@ -55,7 +55,7 @@ For Vaillant Vsmart
 
 For MiGo
 - Client ID : na_client_android_sdbg
-- Client secret : 28d36XXXXXXXXXXXXffeb (see above)
+- Client secret : XXXXXXXXXXXXXXXXXXXXXXX (see above)
 - Username : MY_MIGO_APP_USERNAME
 - Password : MY_MIGO_APP_PWD
 - User prefix : sdbg
