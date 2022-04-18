@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.5.0 (2022-04-18)
+### Feature
+* Add french translation ([`6804fe5`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/6804fe594ac0dace1a5d3734b769f45c8cbb1a19))
+* Improves existing translations by using predefined HA Core translations and adds new reauth translations. ([`da6b9f9`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/da6b9f9c3284713f7bc07cd0a85f8d32f6f64eb8))
+* Adds reauth handler in config flow which is triggered by unauthorized error from the API. ([`e7ea00b`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/e7ea00b414e742be83a471b2d78086777db26140))
+
 ## v0.4.1 (2022-04-08)
 ### Fix
 * Fixes issue when comparing temperatures in case setpoint temperature is not set, like in summer mode ([`a00ead5`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/a00ead5ee6d36677eca84885d97160bc0b6c2a5c))
