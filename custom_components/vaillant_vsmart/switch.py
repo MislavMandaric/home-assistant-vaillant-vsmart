@@ -4,7 +4,7 @@ from __future__ import annotations
 import datetime
 import logging
 
-from homeassistant.components.switch import SwitchEntity, DEVICE_CLASS_SWITCH
+from homeassistant.components.switch import SwitchEntity, SwitchDeviceClass
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
@@ -60,10 +60,10 @@ class VaillantHwbSwitch(VaillantEntity, SwitchEntity):
         return EntityCategory.CONFIG
 
     @property
-    def device_class(self) -> str:
+    def device_class(self) -> SwitchDeviceClass:
         """Return device class for this switch."""
 
-        return DEVICE_CLASS_SWITCH
+        return SwitchDeviceClass.SWITCH
 
     @property
     def is_on(self) -> bool:
@@ -126,10 +126,10 @@ class VaillantScheduleSwitch(VaillantEntity, SwitchEntity):
         return EntityCategory.CONFIG
 
     @property
-    def device_class(self) -> str:
+    def device_class(self) -> SwitchDeviceClass:
         """Return device class for this switch."""
 
-        return DEVICE_CLASS_SWITCH
+        return SwitchDeviceClass.SWITCH
 
     @property
     def is_on(self) -> bool:

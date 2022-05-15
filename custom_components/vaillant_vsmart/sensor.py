@@ -5,8 +5,8 @@ import logging
 
 from homeassistant.components.sensor import (
     SensorEntity,
-    DEVICE_CLASS_BATTERY,
-    STATE_CLASS_MEASUREMENT,
+    SensorDeviceClass,
+    SensorStateClass,
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import PERCENTAGE
@@ -57,16 +57,16 @@ class VaillantBatterySensor(VaillantEntity, SensorEntity):
         return EntityCategory.DIAGNOSTIC
 
     @property
-    def device_class(self) -> str:
+    def device_class(self) -> SensorDeviceClass:
         """Return device class for this sensor."""
 
-        return DEVICE_CLASS_BATTERY
+        return SensorDeviceClass.BATTERY
 
     @property
-    def state_class(self) -> str:
+    def state_class(self) -> SensorStateClass:
         """Return state class for this sensor."""
 
-        return STATE_CLASS_MEASUREMENT
+        return SensorStateClass.MEASUREMENT
 
     @property
     def native_value(self) -> str:
