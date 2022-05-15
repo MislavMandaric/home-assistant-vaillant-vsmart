@@ -9,11 +9,12 @@
 
 **This component will set up the following platforms.**
 
-| Platform        | Description                                |
-| --------------- | ------------------------------------------ |
-| `climate`       | Management of Vaillant thermostat.         |
-| `switch`        | Hot water boost switch of the thermostat.  |
-| `sensor`        | Battery sensor for the thermostat.         |
+| Platform        | Description                                      |
+| --------------- | ------------------------------------------------ |
+| `climate`       | Management of Vaillant thermostat.               |
+| `select`        | Selector showing currently selected schedule.    |
+| `sensor`        | Battery sensor for the thermostat.               |
+| `switch`        | Hot water boost and on/off switch for schedules. |
 
 {% if not installed %}
 
@@ -26,6 +27,24 @@
 {% endif %}
 
 ## Configuration is done in the UI
+
+Check out the [community page](https://community.home-assistant.io/t/added-support-for-vaillant-thermostat-how-to-integrate-in-official-release/31858). You can find out how to extract client ID and client secret there.
+
+For Vaillant Vsmart
+- Client ID : na_client_android_vaillant
+- Client secret : XXXXXXXXXXXXXXXXXXXXXXX (see above)
+- Username : MY_VAILLANT_APP_USERNAME
+- Password : MY_VAILLANT_APP_PWD
+- User prefix : vaillant
+- App version : 1.0.4.0
+
+For MiGo
+- Client ID : na_client_android_sdbg
+- Client secret : XXXXXXXXXXXXXXXXXXXXXXX (see above)
+- Username : MY_MIGO_APP_USERNAME
+- Password : MY_MIGO_APP_PWD
+- User prefix : sdbg
+- App version : 1.3.0.4
 
 <!---->
 

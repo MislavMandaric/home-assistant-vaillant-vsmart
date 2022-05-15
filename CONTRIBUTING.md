@@ -13,11 +13,12 @@ Github is used to host code, to track issues and feature requests, as well as ac
 
 Pull requests are the best way to propose changes to the codebase.
 
+1. Start by opening a new issue (if your PR doesn't reference an already existing one), where proposed changes can be discussed
 1. Fork the repo and create your branch from `master`.
-2. If you've changed something, update the documentation.
-3. Make sure your code lints (using black).
-4. Test you contribution.
-5. Issue that pull request!
+1. If you've changed something, update the documentation.
+1. Make sure your code lints (using black).
+1. Test you contribution.
+1. Issue that pull request!
 
 ## Any contributions you make will be under the MIT Software License
 
@@ -42,6 +43,11 @@ Report a bug by [opening a new issue](../../issues/new/choose); it's that easy!
 
 People _love_ thorough bug reports. I'm not even kidding.
 
+## Request new features using Github's [issues](../../issues)
+
+Github issues are also used to track feature requests.
+Same as with bug repors, request new features by [opening a new issue](../../issues/new/choose).
+
 ## Use a Consistent Coding Style
 
 Use [black](https://github.com/ambv/black) and [prettier](https://prettier.io/)
@@ -49,6 +55,12 @@ to make sure the code follows the style.
 
 Or use the `pre-commit` settings implemented in this repository
 (see deicated section below).
+
+## Use Semantic Release commit and branch naming conventions
+
+This component uses [Semantic Release](https://github.com/semantic-release/semantic-release) to automate releases.
+
+Read and follow all the naming conventions outlined in their docs. Check out already existing commits and pull requests for guidance.
 
 ## Test your code modification
 

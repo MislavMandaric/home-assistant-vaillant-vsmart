@@ -14,11 +14,12 @@
 
 **This component will set up the following platforms.**
 
-| Platform        | Description                                |
-| --------------- | ------------------------------------------ |
-| `climate`       | Management of Vaillant thermostat.         |
-| `switch`        | Hot water boost switch of the thermostat.  |
-| `sensor`        | Battery sensor for the thermostat.         |
+| Platform        | Description                                      |
+| --------------- | ------------------------------------------------ |
+| `climate`       | Management of Vaillant thermostat.               |
+| `select`        | Selector showing currently selected schedule.    |
+| `sensor`        | Battery sensor for the thermostat.               |
+| `switch`        | Hot water boost and on/off switch for schedules. |
 
 ## Installation
 

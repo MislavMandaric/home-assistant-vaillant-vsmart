@@ -1,12 +1,10 @@
 {
     "name": "Vaillant vSMART",
-    "hacs": "1.6.0",
     "domains": [
         "climate",
         "select",
         "sensor",
         "switch"
     ],
-    "iot_class": "Cloud Polling",
-    "homeassistant": "2021.6"
+    "homeassistant": "2022.1"
 }
