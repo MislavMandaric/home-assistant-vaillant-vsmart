@@ -6,16 +6,11 @@ import logging
 
 from homeassistant.components.climate import ClimateEntity
 from homeassistant.components.climate.const import (
-    CURRENT_HVAC_HEAT,
-    CURRENT_HVAC_IDLE,
-    CURRENT_HVAC_OFF,
-    HVAC_MODE_AUTO,
-    HVAC_MODE_HEAT,
-    HVAC_MODE_OFF,
+    HVACAction,
+    HVACMode,
+    ClimateEntityFeature,
     PRESET_AWAY,
     PRESET_HOME,
-    SUPPORT_PRESET_MODE,
-    SUPPORT_TARGET_TEMPERATURE,
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import ATTR_TEMPERATURE, TEMP_CELSIUS
@@ -35,8 +30,10 @@ DEFAULT_TEMPERATURE_INCREASE = 1
 PRESET_SUMMER = "Summer"
 PRESET_WINTER = "Winter"
 
-SUPPORTED_FEATURES = SUPPORT_TARGET_TEMPERATURE | SUPPORT_PRESET_MODE
-SUPPORTED_HVAC_MODES = [HVAC_MODE_AUTO, HVAC_MODE_HEAT, HVAC_MODE_OFF]
+SUPPORTED_FEATURES = (
+    ClimateEntityFeature.TARGET_TEMPERATURE | ClimateEntityFeature.PRESET_MODE
+)
+SUPPORTED_HVAC_MODES = [HVACMode.AUTO, HVACMode.HEAT, HVACMode.OFF]
 SUPPORTED_PRESET_MODES = [PRESET_SUMMER, PRESET_WINTER, PRESET_AWAY, PRESET_HOME]
 
 
@@ -95,41 +92,41 @@ class VaillantClimate(VaillantEntity, ClimateEntity):
         return self._module.measured.setpoint_temp
 
     @property
-    def hvac_modes(self) -> list[str]:
+    def hvac_modes(self) -> list[HVACMode]:
         """Return the list of available HVAC operation modes."""
 
         return SUPPORTED_HVAC_MODES
 
     @property
-    def hvac_mode(self) -> str:
+    def hvac_mode(self) -> HVACMode:
         """
         Return currently selected HVAC operation mode.
         """
 
         if self._device.system_mode == SystemMode.FROSTGUARD:
-            return HVAC_MODE_OFF
+            return HVACMode.OFF
 
         if self._module.setpoint_manual.setpoint_activate:
-            return HVAC_MODE_HEAT
+            return HVACMode.HEAT
 
-        return HVAC_MODE_AUTO
+        return HVACMode.AUTO
 
     @property
-    def hvac_action(self) -> str:
+    def hvac_action(self) -> HVACAction:
         """
         Return the currently running HVAC action.
         """
 
         if self._device.system_mode == SystemMode.FROSTGUARD:
-            return CURRENT_HVAC_OFF
+            return HVACAction.OFF
 
         try:
             if self._module.measured.temperature < self._module.measured.setpoint_temp:
-                return CURRENT_HVAC_HEAT
+                return HVACAction.HEATING
         except TypeError:
             pass
 
-        return CURRENT_HVAC_IDLE
+        return HVACAction.IDLE
 
     @property
     def preset_modes(self) -> list[str]:
@@ -152,12 +149,12 @@ class VaillantClimate(VaillantEntity, ClimateEntity):
 
         return
 
-    async def async_set_hvac_mode(self, hvac_mode: str) -> None:
+    async def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:
         """Select new HVAC operation mode."""
 
         _LOGGER.debug("Setting HVAC mode to: %s", hvac_mode)
 
-        if hvac_mode == HVAC_MODE_OFF:
+        if hvac_mode == HVACMode.OFF:
             try:
                 await self._client.async_set_system_mode(
                     self._device_id,
@@ -166,7 +163,7 @@ class VaillantClimate(VaillantEntity, ClimateEntity):
                 )
             except ApiException as ex:
                 _LOGGER.exception(ex)
-        elif hvac_mode == HVAC_MODE_HEAT:
+        elif hvac_mode == HVACMode.HEAT:
             if self._device.system_mode == SystemMode.FROSTGUARD:
                 return
 
@@ -187,7 +184,7 @@ class VaillantClimate(VaillantEntity, ClimateEntity):
                 )
             except ApiException as ex:
                 _LOGGER.exception(ex)
-        elif hvac_mode == HVAC_MODE_AUTO:
+        elif hvac_mode == HVACMode.AUTO:
             if self._device.system_mode == SystemMode.FROSTGUARD:
                 try:
                     await self._client.async_set_system_mode(
