@@ -2,6 +2,14 @@
 
 <!--next-version-placeholder-->
 
+## v0.5.1 (2022-05-15)
+### Fix
+* Replaces deprecated constants with enums ([`5c202fe`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/5c202fec5f323356615f18cb6f4aa83caeddc4f5))
+
+### Documentation
+* Removed secret key ([`fa7d5fe`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/fa7d5fed45118ba808430c564c638db26e04b7bb))
+* Add Vaillant and Migo parameters in readme ([`6549a0d`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/6549a0d9b8a95f68643ba1692d134f7468bc4cae))
+
 ## v0.5.0 (2022-04-18)
 ### Feature
 * Add french translation ([`6804fe5`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/6804fe594ac0dace1a5d3734b769f45c8cbb1a19))
