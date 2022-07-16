@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.6.0 (2022-07-16)
+### Feature
+* Updates docs and prepares hacs.json for publishing ([`dbfaaea`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/dbfaaeaf84de3b93899f24a6afda1a3e67aac7d7))
+
 ## v0.5.1 (2022-05-15)
 ### Fix
 * Replaces deprecated constants with enums ([`5c202fe`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/5c202fec5f323356615f18cb6f4aa83caeddc4f5))
