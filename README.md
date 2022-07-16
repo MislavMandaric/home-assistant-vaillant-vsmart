@@ -92,7 +92,7 @@ Thanks to [@philippelt](https://github.com/philippelt), [@jabesq](https://github
 [license-shield]: https://img.shields.io/github/license/MislavMandaric/home-assistant-vaillant-vsmart.svg?style=for-the-badge
 
 [hacs]: https://hacs.xyz
-[hacs-shield]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
+[hacs-shield]: https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge
 
 [forum]: https://community.home-assistant.io/
 [forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg?style=for-the-badge

@@ -1,10 +1,4 @@
 {
     "name": "Vaillant vSMART",
-    "domains": [
-        "climate",
-        "select",
-        "sensor",
-        "switch"
-    ],
     "homeassistant": "2022.1"
 }
