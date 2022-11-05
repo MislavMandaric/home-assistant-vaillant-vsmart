@@ -13,7 +13,7 @@ from homeassistant.components.climate.const import (
     PRESET_HOME,
 )
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import ATTR_TEMPERATURE, TEMP_CELSIUS
+from homeassistant.const import ATTR_TEMPERATURE, UnitOfTemperature
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from vaillant_netatmo_api import ApiException, SetpointMode, SystemMode
@@ -77,7 +77,7 @@ class VaillantClimate(VaillantEntity, ClimateEntity):
     def temperature_unit(self) -> str:
         """Return the measurement unit for all temperature values."""
 
-        return TEMP_CELSIUS
+        return UnitOfTemperature.CELSIUS
 
     @property
     def current_temperature(self) -> float:
