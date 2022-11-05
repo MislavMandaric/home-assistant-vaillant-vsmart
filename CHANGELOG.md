@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v0.6.1 (2022-11-05)
+### Fix
+* Remove reading measure data manually and use new version of API which syncs data on each getthermostatsdata call to get up-to-date data instead of cached one ([`0aa28ab`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/0aa28abcd43e3d0729755ec2927420d96a53ca07))
+* Use proper est_setpoint_temp value for target temperature and fallback to setpoint_temp if it doesn't exist ([`e4b02d1`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/e4b02d1e0a8422ac5489590ff18a52cd6625342f))
+
 ## v0.6.0 (2022-07-16)
 ### Feature
 * Updates docs and prepares hacs.json for publishing ([`dbfaaea`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/dbfaaeaf84de3b93899f24a6afda1a3e67aac7d7))
