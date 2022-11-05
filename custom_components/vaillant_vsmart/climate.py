@@ -89,7 +89,11 @@ class VaillantClimate(VaillantEntity, ClimateEntity):
     def target_temperature(self) -> float:
         """Return the targeted room temperature."""
 
-        return self._module.measured.setpoint_temp
+        return (
+            self._module.measured.est_setpoint_temp
+            if self._module.measured.est_setpoint_temp is not None
+            else self._module.measured.setpoint_temp
+        )
 
     @property
     def hvac_modes(self) -> list[HVACMode]:
