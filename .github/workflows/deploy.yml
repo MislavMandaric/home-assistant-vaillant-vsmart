@@ -37,7 +37,7 @@ jobs:
         additional_options: --prerelease
 
   release:
-    needs: [prerelease]
+    needs: [validate]
 
     runs-on: ubuntu-latest
     concurrency: release
