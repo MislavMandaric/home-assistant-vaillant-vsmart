@@ -6,6 +6,8 @@ from vaillant_netatmo_api.thermostat import Program, TimeSlot, Zone
 def map_program_to_schedule(
     schedule_entity_id: str, profile_entity_id: str, program: Program
 ) -> dict:
+    """TODO"""
+
     daily_slots = program.get_timeslots_for_today()
 
     return {
@@ -27,6 +29,8 @@ def map_program_to_schedule(
 
 
 def map_timetable_to_timestamps(timetable: list[TimeSlot]) -> list[str]:
+    """TODO"""
+
     timestamps = []
 
     today = datetime.now().date()
@@ -44,6 +48,8 @@ def map_timetable_to_timestamps(timetable: list[TimeSlot]) -> list[str]:
 
 
 def map_timetable_to_next_entries(timetable: list[TimeSlot]) -> list[int]:
+    """TODO"""
+
     previous_entries = []
     next_entries = []
 
@@ -61,6 +67,8 @@ def map_timetable_to_timeslots(
     timetable: list[TimeSlot],
     zones: list[Zone],
 ) -> list[dict]:
+    """TODO"""
+
     r = []
 
     for i, time_slot in enumerate(timetable):
