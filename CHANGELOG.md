@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.6.2 (2022-11-05)
+### Fix
+* Parallel run of prerelease and release because release can't be triggered from multiple branches ([`6cbcc44`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/6cbcc44d789d262466cff5b1d59acd78fd169369))
+
 ## v0.6.2-beta.1 (2022-11-05)
 ### Fix
 * Update to new versions of semantic release ([`944d387`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/944d387941c5887a766950c09463bc09772f2f6a))
