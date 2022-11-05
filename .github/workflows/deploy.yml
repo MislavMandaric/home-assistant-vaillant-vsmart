@@ -1,4 +1,4 @@
-name: release
+name: deploy
 
 on:
   push:
@@ -18,8 +18,26 @@ jobs:
         - name: Hassfest validation
           uses: "home-assistant/actions/hassfest@master"
 
-  release:
+  prerelease:
     needs: [validate]
+
+    runs-on: ubuntu-latest
+    concurrency: prerelease
+    environment:
+      name: prerelease
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: Python Semantic Release
+      uses: relekang/python-semantic-release@v7.19.2
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        additional_options: --prerelease
+
+  release:
+    needs: [prerelease]
 
     runs-on: ubuntu-latest
     concurrency: release
