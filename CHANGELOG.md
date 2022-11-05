@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.6.2-beta.1 (2022-11-05)
+### Fix
+* Update to new versions of semantic release ([`944d387`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/944d387941c5887a766950c09463bc09772f2f6a))
+
 ## v0.6.1 (2022-11-05)
 ### Fix
 * Remove reading measure data manually and use new version of API which syncs data on each getthermostatsdata call to get up-to-date data instead of cached one ([`0aa28ab`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/0aa28abcd43e3d0729755ec2927420d96a53ca07))
