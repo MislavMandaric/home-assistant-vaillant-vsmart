@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v0.6.3-beta.1 (2022-11-05)
+### Fix
+* Update minimum HA version to 2022.11 because new temperature enum which replaces deprecated constants is used ([`f72c0e7`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/f72c0e785752b3bd04005738112090171cb3d3d1))
+* Replaces temperature constant with temperature enum ([`8042aa3`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/8042aa37b5f8bcb4497ddb18ca5486da949d9603))
+* Adds integration_type to manifest ([`aacd662`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/aacd662839820ea53bbec2a6d3211dc444961b85))
+* Replace async_setup_platforms with async_forward_entry_setups ([`fc8876a`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/fc8876a714564e6907371c050f492ab395a29fc2))
+
 ## v0.6.2 (2022-11-05)
 ### Fix
 * Parallel run of prerelease and release because release can't be triggered from multiple branches ([`6cbcc44`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/6cbcc44d789d262466cff5b1d59acd78fd169369))
