@@ -114,6 +114,8 @@ async def websocket_get_tags(
 
 
 async def async_register_websockets(hass: HomeAssistant) -> None:
+    """TODO"""
+
     hass.components.websocket_api.async_register_command(websocket_get_schedules)
     hass.components.websocket_api.async_register_command(websocket_get_schedule_item)
     hass.components.websocket_api.async_register_command(
