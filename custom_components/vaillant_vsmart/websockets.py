@@ -35,7 +35,7 @@ async def websocket_get_schedules(
 ) -> None:
     """Publish scheduler list data."""
 
-    er: EntityRegistry = await hass.helpers.entity_registry.async_get_registry()
+    er: EntityRegistry = hass.helpers.entity_registry.async_get()
 
     schedule: list[dict] = []
     for entry_id in hass.data[DOMAIN].keys():
@@ -65,7 +65,7 @@ async def websocket_get_schedule_item(
 ) -> None:
     """Publish scheduler list data."""
 
-    er: EntityRegistry = await hass.helpers.entity_registry.async_get_registry()
+    er: EntityRegistry = hass.helpers.entity_registry.async_get()
 
     for entry_id in hass.data[DOMAIN].keys():
         coordinator: VaillantCoordinator = hass.data[DOMAIN][entry_id]
