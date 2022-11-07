@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.6.3-beta.3 (2022-11-07)
+### Fix
+* Resolve issue with hass variable not being passed to entity registry because of the wrong helper usage ([`904fc4f`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/904fc4fa34f1e0b6c467852ee34dc36464269dae))
+
 ## v0.6.3-beta.2 (2022-11-07)
 ### Fix
 * Replace deprecated async_get_registry call with async_get ([`05fd8a6`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/05fd8a6b2eb50ffba62a0b0f0a549de8f075cbc6))
