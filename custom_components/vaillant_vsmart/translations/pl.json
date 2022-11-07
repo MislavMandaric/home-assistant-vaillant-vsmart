@@ -1,0 +1,38 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "description": "Jeśli konfigurujesz komponent po raz pierwszy i potrzebujesz wskazówek, sprawdź [strona społeczności](https://community.home-assistant.io/t/added-support-for-vaillant-thermostat-how-to-integrate-in-official-release/31858). Możesz tam dowiedzieć się, jak wyodrębnić identyfikator klienta i klucz klienta.",
+                "data": {
+                    "client_id": "ID klienta",
+                    "client_secret": "Klucz klienta",
+                    "username": "Nazwa użytkownika",
+                    "password": "Hasło",
+                    "user_prefix": "Prefiks użytkownika",
+                    "app_version": "Wersja aplikacji"
+                }
+            },
+            "reauth": {
+                "description": "Tokeny używane przez komponent wygasły i musisz ponownie uwierzytelnić się za pomocą interfejsu API. Ponieważ Twoje dane logowania nigdy nie są przechowywane, musisz wprowadzić je ponownie.",
+                "data": {
+                    "client_id": "ID klienta",
+                    "client_secret": "Klucz klienta",
+                    "username": "Nazwa użytkownika",
+                    "password": "Hasło",
+                    "user_prefix": "Prefiks użytkownika",
+                    "app_version": "Wersja aplikacji"
+                }
+            }
+        },
+        "error": {
+            "invalid_auth": "Błąd autoryzacji",
+            "cannot_connect": "Błąd połączenia",
+            "unknown": "Niespodziewany błąd"
+        },
+        "abort": {
+            "reauth_successful": "Pomyślne ponowne uwierzytelnienie",
+            "already_in_progress": "Konfiguracja jest już w toku",
+            "already_configured": "Konto wstępnie skonfigurowane"
+        }
+    }
+}
