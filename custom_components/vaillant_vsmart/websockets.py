@@ -1,7 +1,7 @@
 import logging
 
 import voluptuous as vol
-from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers import config_validation as cv, entity_registry
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.components.http.data_validator import RequestDataValidator
 from homeassistant.core import HomeAssistant
@@ -10,7 +10,6 @@ from homeassistant.components.websocket_api import (
     ActiveConnection,
 )
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
-from homeassistant.helpers.entity_registry import EntityRegistry
 
 from vaillant_netatmo_api.thermostat import Program
 
@@ -35,7 +34,7 @@ async def websocket_get_schedules(
 ) -> None:
     """Publish scheduler list data."""
 
-    er: EntityRegistry = hass.helpers.entity_registry.async_get()
+    er = entity_registry.async_get(hass)
 
     schedule: list[dict] = []
     for entry_id in hass.data[DOMAIN].keys():
@@ -65,7 +64,7 @@ async def websocket_get_schedule_item(
 ) -> None:
     """Publish scheduler list data."""
 
-    er: EntityRegistry = hass.helpers.entity_registry.async_get()
+    er = entity_registry.async_get(hass)
 
     for entry_id in hass.data[DOMAIN].keys():
         coordinator: VaillantCoordinator = hass.data[DOMAIN][entry_id]
