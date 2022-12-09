@@ -1,0 +1,38 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "description": "Si estás configurando el componente por primera vez y necesitas algunas indicaciones, echa un vistazo a la [página de la comunidad](https://community.home-assistant.io/t/added-support-for-vaillant-thermostat-how-to-integrate-in-official-release/31858). Allí podrás averiguar cómo extraer el ID de cliente y la clave secreta de cliente.",
+                "data": {
+                    "client_id": "ID de cliente",
+                    "client_secret": "Clave secreta de cliente",
+                    "username": "Nombre de usuario",
+                    "password": "Contraseña",
+                    "user_prefix": "Prefijo de usuario",
+                    "app_version": "Versión de la aplicación"
+                }
+            },
+            "reauth": {
+                "description": "Los tokens utilizados por el componente han caducado y necesitas volver a autenticarte con la API de nuevo. Como tus credenciales nunca se almacenan, necesitas introducirlas de nuevo.",
+                "data": {
+                    "client_id": "ID de cliente",
+                    "client_secret": "Clave secreta de cliente",
+                    "username": "Nombre de usuario",
+                    "password": "Contraseña",
+                    "user_prefix": "Prefijo de usuario",
+                    "app_version": "Versión de la aplicación"
+                }
+            }
+        },
+        "error": {
+            "invalid_auth": "[%key:common::config_flow::error::invalid_auth%]",
+            "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
+            "unknown": "[%key:common::config_flow::error::unknown%]"
+        },
+        "abort": {
+            "reauth_successful": "[%key:common::config_flow::abort::reauth_successful%]",
+            "already_in_progress": "[%key:common::config_flow::abort::already_in_progress%]",
+            "already_configured": "[%key:common::config_flow::abort::already_configured_account%]"
+        }
+    }
+}
