@@ -25,14 +25,14 @@
             }
         },
         "error": {
-            "invalid_auth": "[%key:common::config_flow::error::invalid_auth%]",
-            "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
-            "unknown": "[%key:common::config_flow::error::unknown%]"
+            "invalid_auth": "Error de autenticación",
+            "cannot_connect": "Error de conexión",
+            "unknown": "Error desconocido"
         },
         "abort": {
-            "reauth_successful": "[%key:common::config_flow::abort::reauth_successful%]",
-            "already_in_progress": "[%key:common::config_flow::abort::already_in_progress%]",
-            "already_configured": "[%key:common::config_flow::abort::already_configured_account%]"
+            "reauth_successful": "Autenticación correcta",
+            "already_in_progress": "La configuración de este usuario ya está en curso",
+            "already_configured": "La configuración de este usuario ya se ha completado"
         }
     }
 }
