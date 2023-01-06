@@ -125,7 +125,7 @@ class VaillantClimate(VaillantEntity, ClimateEntity):
             return HVACAction.OFF
 
         try:
-            if self._module.measured.temperature < self._module.measured.setpoint_temp:
+            if self._module.boiler_status == True:
                 return HVACAction.HEATING
         except TypeError:
             pass
