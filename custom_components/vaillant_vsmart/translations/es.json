@@ -13,7 +13,7 @@
                 }
             },
             "reauth": {
-                "description": "Los tokens utilizados por el componente han caducado y necesitas volver a autenticarte con la API de nuevo. Como tus credenciales nunca se almacenan, necesitas introducirlas de nuevo.",
+                "description": "Los tokens utilizados por el componente han caducado y necesitas volver a autenticarte con la API. Como tus credenciales nunca se almacenan, debes introducirlas nuevamente.",
                 "data": {
                     "client_id": "ID de cliente",
                     "client_secret": "Clave secreta de cliente",
