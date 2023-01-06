@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.7.0 (2023-01-06)
+### Feature
+* Add spanish translation ([`5c7511a`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/5c7511a11d49edb1a67423a17543534792a495a0))
+
 ## v0.6.3-beta.3 (2022-11-07)
 ### Fix
 * Resolve issue with hass variable not being passed to entity registry because of the wrong helper usage ([`904fc4f`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/904fc4fa34f1e0b6c467852ee34dc36464269dae))
