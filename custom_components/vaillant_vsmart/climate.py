@@ -124,11 +124,8 @@ class VaillantClimate(VaillantEntity, ClimateEntity):
         if self._device.system_mode == SystemMode.FROSTGUARD:
             return HVACAction.OFF
 
-        try:
-            if self._module.measured.temperature < self._module.measured.setpoint_temp:
-                return HVACAction.HEATING
-        except TypeError:
-            pass
+        if self._module.boiler_status == True:
+            return HVACAction.HEATING
 
         return HVACAction.IDLE
 
