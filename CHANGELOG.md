@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v0.8.0 (2023-01-07)
+### Feature
+* Support for domestic hot water temperature config ([`c70a295`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/c70a2957d3a2a2c99cafb8c3644ffcdeaa442de7))
+
+### Fix
+* Change HVAC action to be based on the status of the boiler instead of calculating it from the temperatures ([`35399de`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/35399def930d0a2ed012a3e057899cc91fa270c9))
+
 ## v0.7.0 (2023-01-06)
 ### Feature
 * Add spanish translation ([`5c7511a`](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/5c7511a11d49edb1a67423a17543534792a495a0))
