@@ -12,6 +12,7 @@ from homeassistant.const import UnitOfTemperature
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from vaillant_netatmo_api import ApiException
 
 from .const import DOMAIN
 from .entity import VaillantCoordinator, VaillantEntity
@@ -94,6 +95,12 @@ class VaillantDHWTemperatureNumber(VaillantEntity, NumberEntity):
     async def async_set_native_value(self, value: float) -> None:
         """Update the current temperature."""
 
-        await self._client.async_set_hot_water_temperature(
-            self._device_id, round(value)
-        )
+        try:
+            await self._client.async_set_hot_water_temperature(
+                self._device_id,
+                round(value),
+            )
+        except ApiException as ex:
+            _LOGGER.exception(ex)
+
+        await self.coordinator.async_request_refresh()
