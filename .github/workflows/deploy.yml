@@ -31,7 +31,7 @@ jobs:
       with:
         fetch-depth: 0
     - name: Python Semantic Release
-      uses: python-semantic-release/python-semantic-release@v7.32.2
+      uses: python-semantic-release/python-semantic-release@v7.33.0
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         additional_options: --prerelease
@@ -49,6 +49,6 @@ jobs:
       with:
         fetch-depth: 0
     - name: Python Semantic Release
-      uses: python-semantic-release/python-semantic-release@v7.32.2
+      uses: python-semantic-release/python-semantic-release@v7.33.0
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
