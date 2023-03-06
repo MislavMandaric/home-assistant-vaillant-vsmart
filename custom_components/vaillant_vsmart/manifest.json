@@ -14,6 +14,6 @@
     "@MislavMandaric"
   ],
   "requirements": [
-    "vaillant-netatmo-api==0.10.0"
+    "vaillant-netatmo-api==0.11.0"
   ]
 }
