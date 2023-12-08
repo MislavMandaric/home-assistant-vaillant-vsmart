@@ -44,6 +44,18 @@ class VaillantData:
             for module in device.modules
             for program in module.therm_program_list
         }
+        self.device_for_program = {
+            program.id: device.id
+            for device in devices
+            for module in device.modules
+            for program in module.therm_program_list
+        }
+        self.module_for_program = {
+            program.id: module.id
+            for device in devices
+            for module in device.modules
+            for program in module.therm_program_list
+        }
 
 
 class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
