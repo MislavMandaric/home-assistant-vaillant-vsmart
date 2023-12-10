@@ -6,11 +6,11 @@ DOMAIN = "vaillant_vsmart"
 
 # Platforms
 CLIMATE = "climate"
-NUMBER = "number"
-SWITCH = "switch"
-SENSOR = "sensor"
 SELECT = "select"
-PLATFORMS = [CLIMATE, NUMBER, SWITCH, SENSOR, SELECT]
+SENSOR = "sensor"
+SWITCH = "switch"
+WATER_HEATER = "water_heater"
+PLATFORMS = [CLIMATE, SELECT, SENSOR, SWITCH, WATER_HEATER]
 
 # Configuration and options
 CONF_APP_VERSION = "app_version"
