@@ -5,10 +5,10 @@
     "@MislavMandaric"
   ],
   "config_flow": true,
-  "documentation": "https://github.com/MislavMandaric/home-assistant-vaillant-vsmart",
   "dependencies": [
     "http"
   ],
+  "documentation": "https://github.com/MislavMandaric/home-assistant-vaillant-vsmart",
   "integration_type": "hub",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/issues",
