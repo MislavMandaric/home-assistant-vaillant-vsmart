@@ -10,7 +10,7 @@ from homeassistant.components.climate.const import (
     HVACMode,
     ClimateEntityFeature,
     PRESET_AWAY,
-    PRESET_HOME,
+    PRESET_NONE,
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import ATTR_TEMPERATURE, UnitOfTemperature
@@ -21,20 +21,17 @@ from vaillant_netatmo_api import ApiException, SetpointMode, SystemMode
 from .const import (
     DOMAIN,
 )
-from .entity import VaillantCoordinator, VaillantEntity
+from .entity import VaillantCoordinator, VaillantModuleEntity
 
 _LOGGER = logging.getLogger(__name__)
 
 DEFAULT_TEMPERATURE_INCREASE = 1
 
-PRESET_SUMMER = "Summer"
-PRESET_WINTER = "Winter"
-
 SUPPORTED_FEATURES = (
     ClimateEntityFeature.TARGET_TEMPERATURE | ClimateEntityFeature.PRESET_MODE
 )
-SUPPORTED_HVAC_MODES = [HVACMode.AUTO, HVACMode.HEAT, HVACMode.OFF]
-SUPPORTED_PRESET_MODES = [PRESET_SUMMER, PRESET_WINTER, PRESET_AWAY, PRESET_HOME]
+SUPPORTED_HVAC_MODES = [HVACMode.AUTO, HVACMode.HEAT]
+SUPPORTED_PRESET_MODES = [PRESET_NONE, PRESET_AWAY]
 
 
 async def async_setup_entry(
@@ -52,20 +49,14 @@ async def async_setup_entry(
     async_add_devices(new_devices)
 
 
-class VaillantClimate(VaillantEntity, ClimateEntity):
+class VaillantClimate(VaillantModuleEntity, ClimateEntity):
     """Vaillant vSMART Climate."""
-
-    @property
-    def unique_id(self) -> str:
-        """Return a unique ID to use for this entity."""
-
-        return self._module.id
 
     @property
     def name(self) -> str:
         """Return the name of the climate."""
 
-        return self._module.module_name
+        return None
 
     @property
     def supported_features(self) -> int:
@@ -96,6 +87,20 @@ class VaillantClimate(VaillantEntity, ClimateEntity):
         )
 
     @property
+    def hvac_action(self) -> HVACAction:
+        """
+        Return the currently running HVAC action.
+        """
+
+        if self._device.system_mode in [SystemMode.FROSTGUARD, SystemMode.SUMMER]:
+            return HVACAction.OFF
+
+        if self._module.boiler_status == True:
+            return HVACAction.HEATING
+
+        return HVACAction.IDLE
+
+    @property
     def hvac_modes(self) -> list[HVACMode]:
         """Return the list of available HVAC operation modes."""
 
@@ -107,27 +112,10 @@ class VaillantClimate(VaillantEntity, ClimateEntity):
         Return currently selected HVAC operation mode.
         """
 
-        if self._device.system_mode == SystemMode.FROSTGUARD:
-            return HVACMode.OFF
-
         if self._module.setpoint_manual.setpoint_activate:
             return HVACMode.HEAT
 
         return HVACMode.AUTO
-
-    @property
-    def hvac_action(self) -> HVACAction:
-        """
-        Return the currently running HVAC action.
-        """
-
-        if self._device.system_mode == SystemMode.FROSTGUARD:
-            return HVACAction.OFF
-
-        if self._module.boiler_status == True:
-            return HVACAction.HEATING
-
-        return HVACAction.IDLE
 
     @property
     def preset_modes(self) -> list[str]:
@@ -142,32 +130,14 @@ class VaillantClimate(VaillantEntity, ClimateEntity):
         if self._module.setpoint_away.setpoint_activate:
             return PRESET_AWAY
 
-        if self._device.system_mode == SystemMode.SUMMER:
-            return PRESET_SUMMER
-
-        if self._device.system_mode == SystemMode.WINTER:
-            return PRESET_WINTER
-
-        return
+        return PRESET_NONE
 
     async def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:
         """Select new HVAC operation mode."""
 
         _LOGGER.debug("Setting HVAC mode to: %s", hvac_mode)
 
-        if hvac_mode == HVACMode.OFF:
-            try:
-                await self._client.async_set_system_mode(
-                    self._device_id,
-                    self._module_id,
-                    SystemMode.FROSTGUARD,
-                )
-            except ApiException as ex:
-                _LOGGER.exception(ex)
-        elif hvac_mode == HVACMode.HEAT:
-            if self._device.system_mode == SystemMode.FROSTGUARD:
-                return
-
+        if hvac_mode == HVACMode.HEAT:
             endtime = datetime.datetime.now() + datetime.timedelta(
                 minutes=self._device.setpoint_default_duration
             )
@@ -186,25 +156,15 @@ class VaillantClimate(VaillantEntity, ClimateEntity):
             except ApiException as ex:
                 _LOGGER.exception(ex)
         elif hvac_mode == HVACMode.AUTO:
-            if self._device.system_mode == SystemMode.FROSTGUARD:
-                try:
-                    await self._client.async_set_system_mode(
-                        self._device_id,
-                        self._module_id,
-                        SystemMode.SUMMER,
-                    )
-                except ApiException as ex:
-                    _LOGGER.exception(ex)
-            else:
-                try:
-                    await self._client.async_set_minor_mode(
-                        self._device_id,
-                        self._module_id,
-                        SetpointMode.MANUAL,
-                        False,
-                    )
-                except ApiException as ex:
-                    _LOGGER.exception(ex)
+            try:
+                await self._client.async_set_minor_mode(
+                    self._device_id,
+                    self._module_id,
+                    SetpointMode.MANUAL,
+                    False,
+                )
+            except ApiException as ex:
+                _LOGGER.exception(ex)
 
         await self.coordinator.async_request_refresh()
 
@@ -212,9 +172,6 @@ class VaillantClimate(VaillantEntity, ClimateEntity):
         """Select new HVAC preset mode."""
 
         _LOGGER.debug("Setting HVAC preset mode to: %s", preset_mode)
-
-        if self._device.system_mode == SystemMode.FROSTGUARD:
-            return
 
         if preset_mode == PRESET_AWAY:
             try:
@@ -226,31 +183,13 @@ class VaillantClimate(VaillantEntity, ClimateEntity):
                 )
             except ApiException as ex:
                 _LOGGER.exception(ex)
-        elif preset_mode == PRESET_HOME:
+        elif preset_mode == PRESET_NONE:
             try:
                 await self._client.async_set_minor_mode(
                     self._device_id,
                     self._module_id,
                     SetpointMode.AWAY,
                     False,
-                )
-            except ApiException as ex:
-                _LOGGER.exception(ex)
-        elif preset_mode == PRESET_SUMMER:
-            try:
-                await self._client.async_set_system_mode(
-                    self._device_id,
-                    self._module_id,
-                    SystemMode.SUMMER,
-                )
-            except ApiException as ex:
-                _LOGGER.exception(ex)
-        elif preset_mode == PRESET_WINTER:
-            try:
-                await self._client.async_set_system_mode(
-                    self._device_id,
-                    self._module_id,
-                    SystemMode.WINTER,
                 )
             except ApiException as ex:
                 _LOGGER.exception(ex)
