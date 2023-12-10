@@ -1,19 +1,19 @@
 {
   "domain": "vaillant_vsmart",
   "name": "Vaillant vSMART",
-  "version": "0.8.0",
-  "integration_type": "hub",
-  "iot_class": "cloud_polling",
-  "documentation": "https://github.com/MislavMandaric/home-assistant-vaillant-vsmart",
-  "issue_tracker": "https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/issues",
-  "dependencies": [
-    "http"
-  ],
-  "config_flow": true,
   "codeowners": [
     "@MislavMandaric"
   ],
+  "config_flow": true,
+  "documentation": "https://github.com/MislavMandaric/home-assistant-vaillant-vsmart",
+  "dependencies": [
+    "http"
+  ],
+  "integration_type": "hub",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/issues",
   "requirements": [
     "vaillant-netatmo-api==0.10.0"
-  ]
+  ],
+  "version": "0.8.0"
 }
