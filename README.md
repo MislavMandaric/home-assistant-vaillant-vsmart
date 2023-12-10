@@ -19,7 +19,8 @@
 | `climate`       | Management of Vaillant thermostat.               |
 | `select`        | Selector showing currently selected schedule.    |
 | `sensor`        | Battery sensor for the thermostat.               |
-| `switch`        | Hot water boost and on/off switch for schedules. |
+| `switch`        | On/off switch for schedules.                     |
+| `water_heater`  | Management of Vaillant boiler.                   |
 
 ## Installation
 
