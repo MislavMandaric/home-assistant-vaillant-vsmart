@@ -1,0 +1,31 @@
+{
+    "branches": [
+        "+([0-9])?(.{+([0-9]),x}).x",
+        "master",
+        {
+            "name": "dev",
+            "prerelease": true
+        }
+    ],
+    "plugins": [
+        "@semantic-release/commit-analyzer",
+        "@semantic-release/release-notes-generator",
+        "@semantic-release/changelog",
+        "@semantic-release/github",
+        [
+            "@semantic-release/exec",
+            {
+                "prepareCmd": "yq -i -o json '.version=\"${nextRelease.version}\"' custom_components/vaillant_vsmart/manifest.json"
+            }
+        ],
+        [
+            "@semantic-release/git",
+            {
+                "assets": [
+                    "CHANGELOG.md",
+                    "custom_components/vaillant_vsmart/manifest.json"
+                ]
+            }
+        ]
+    ]
+}
