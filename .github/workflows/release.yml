@@ -19,9 +19,9 @@ jobs:
         uses: "actions/checkout@v4"
 
       - name: "Install dependencies"
-        run: npm install -g @semantic-release/changelog @semantic-release/git @semantic-release/exec
+        run: npm install -g semantic-release@22 @semantic-release/changelog@6 @semantic-release/git@10 @semantic-release/exec@6
 
       - name: "Semantic Release"
-        run: npx semantic-release@22
+        run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
