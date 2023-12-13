@@ -7,6 +7,29 @@
 
 [![Community Forum][forum-shield]][forum]
 
+{% if installed %}
+
+## Breaking changes in v0.9.0
+
+Updating to v0.9.0 or later release, from any release before v0.9.0, introduces some breaking changes. The list is the following:
+* `switch.{thermostat_name}_hwb` is now removed and integrated into `water_heater.{boiler_name}` entity, as one of the operations of the water heater
+    * If this switch was used in automations, solution is to change automations to use `water_heater.set_operation_mode` service instead of `switch.turn_on` and `switch.turn_off` - operation mode to turn on HWB is `hot_water_boost`, while any other operation mode turns it off
+* `number.{thermostat_name}_dhw_temperature` is now removed and integrated into `water_heater.{boiler_name}` entity, as desired temperature of the water heater
+    * If this value was used in automations, solution is to change automations to use `water_heater.set_temperature` service instead of `number.set_native_value`
+* `climate.{thermostat_name}` now has only `auto` and `heating` modes, `off` is removed
+    * This means thermostat "can't be turned off", but boiler can. Turn it off by setting water heater operation mode to `stand_by` - `water_heater.set_operation_mode(stand_by)`
+* `climate.{thermostat_name}` now has only `AWAY` preset (in addition to `NONE`), `SUMMER`, `WINTER` and `HOME` presets are removed
+    * To toggle between away and home presets, simply toggle between away and none
+    * Other presets are now also water heater operations, which can be set by calling `water_heater.set_operation_mode` service
+        * To use `WINTER` preset, use `heating` operation mode
+        * To use `SUMMER` preset, use `hot_water_only` operation mode
+
+In addition to these breaking changes, all entities now follow new conventions for naming entities. This **will not** rename any of the existing entities after upgrading, but if the integration is removed and reinstalled, all the entities **will** have the new names, instead of the old names, which will break automations referencing entities by names.
+
+These changes align the integration better with the newly redesigned releases of the Vaillant vSMART app, while also making them more consistent and native to the Home Assistant.
+
+{% endif %}
+
 **This component will set up the following platforms.**
 
 | Platform        | Description                                      |
@@ -14,7 +37,8 @@
 | `climate`       | Management of Vaillant thermostat.               |
 | `select`        | Selector showing currently selected schedule.    |
 | `sensor`        | Battery sensor for the thermostat.               |
-| `switch`        | Hot water boost and on/off switch for schedules. |
+| `switch`        | On/off switch for schedules.                     |
+| `water_heater`  | Management of Vaillant boiler.                   |
 
 {% if not installed %}
 

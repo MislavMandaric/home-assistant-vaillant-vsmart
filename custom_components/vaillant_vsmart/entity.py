@@ -167,15 +167,124 @@ class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
         }
 
 
-class VaillantEntity(CoordinatorEntity[VaillantData]):
-    """Base class for Vaillant entities."""
+class VaillantDeviceEntity(CoordinatorEntity[VaillantData]):
+    """Base class for Vaillant device entities."""
+
+    def __init__(
+        self,
+        coordinator: DataUpdateCoordinator[VaillantData],
+        device_id: str,
+    ):
+        """Initialize."""
+
+        super().__init__(coordinator)
+
+        self._device_id = device_id
+
+    @property
+    def _client(self) -> ThermostatClient:
+        """Retrun the instance of the client which enables HTTP communication with the API."""
+
+        return self.coordinator.data.client
+
+    @property
+    def _device(self) -> Device:
+        """Return the device which this entity represents."""
+
+        return self.coordinator.data.devices[self._device_id]
+
+    @property
+    def unique_id(self) -> str:
+        """Return a unique ID to use for this entity."""
+
+        return self._device.id
+
+    @property
+    def has_entity_name(self) -> bool:
+        """Return if entity is using new entity naming conventions."""
+
+        return True
+
+    @property
+    def device_info(self) -> dict[str, Any]:
+        """Return all device info available for this entity."""
+
+        return {
+            "identifiers": {(DOMAIN, self._device.id)},
+            "name": self._device.station_name,
+            "sw_version": self._device.firmware,
+            "manufacturer": self._device.type,
+        }
+
+
+class VaillantModuleEntity(CoordinatorEntity[VaillantData]):
+    """Base class for Vaillant module entities."""
 
     def __init__(
         self,
         coordinator: DataUpdateCoordinator[VaillantData],
         device_id: str,
         module_id: str,
-        program_id: str = None,
+    ):
+        """Initialize."""
+
+        super().__init__(coordinator)
+
+        self._device_id = device_id
+        self._module_id = module_id
+
+    @property
+    def _client(self) -> ThermostatClient:
+        """Retrun the instance of the client which enables HTTP communication with the API."""
+
+        return self.coordinator.data.client
+
+    @property
+    def _device(self) -> Device:
+        """Return the device which this entity represents."""
+
+        return self.coordinator.data.devices[self._device_id]
+
+    @property
+    def _module(self) -> Module:
+        """Return the module which this entity represents."""
+
+        return self.coordinator.data.modules[self._module_id]
+
+    @property
+    def unique_id(self) -> str:
+        """Return a unique ID to use for this entity."""
+
+        return self._module.id
+
+    @property
+    def has_entity_name(self) -> bool:
+        """Return if entity is using new entity naming conventions."""
+
+        return True
+
+    @property
+    def device_info(self) -> dict[str, Any]:
+        """Return all device info available for this entity."""
+
+        return {
+            "identifiers": {(DOMAIN, self._module.id)},
+            "name": self._module.module_name,
+            "sw_version": self._module.firmware,
+            "manufacturer": self._device.type,
+            "via_device": (DOMAIN, self._device.id),
+        }
+
+
+class VaillantProgramEntity(CoordinatorEntity[VaillantData]):
+    """Base class for Vaillant program entities."""
+
+    def __init__(
+        self,
+        coordinator: DataUpdateCoordinator[VaillantData],
+        device_id: str,
+        module_id: str,
+        program_id: str,
     ):
         """Initialize."""
 
@@ -207,10 +316,19 @@ class VaillantEntity(CoordinatorEntity[VaillantData]):
     def _program(self) -> Program:
         """Return the program which this entity represents."""
 
-        if self._program_id is None:
-            return None
-
         return self.coordinator.data.programs[self._program_id]
+
+    @property
+    def unique_id(self) -> str:
+        """Return a unique ID to use for this entity."""
+
+        return self._program.id
+
+    @property
+    def has_entity_name(self) -> bool:
+        """Return if entity is using new entity naming conventions."""
+
+        return True
 
     @property
     def device_info(self) -> dict[str, Any]:

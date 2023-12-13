@@ -25,14 +25,44 @@
             }
         },
         "error": {
-            "invalid_auth": "[%key:common::config_flow::error::invalid_auth%]",
-            "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
-            "unknown": "[%key:common::config_flow::error::unknown%]"
+            "invalid_auth": "Invalid authentication",
+            "cannot_connect": "Failed to connect",
+            "unknown": "Unexpected error"
         },
         "abort": {
-            "reauth_successful": "[%key:common::config_flow::abort::reauth_successful%]",
-            "already_in_progress": "[%key:common::config_flow::abort::already_in_progress%]",
-            "already_configured": "[%key:common::config_flow::abort::already_configured_account%]"
+            "reauth_successful": "Re-authentication was successful",
+            "already_in_progress": "Configuration flow is already in progress",
+            "already_configured": "Account is already configured"
+        }
+    },
+    "entity": {
+        "water_heater": {
+            "vaillant": {
+                "state": {
+                    "heating": "Heating",
+                    "hot_water_boost": "Hot water boost",
+                    "hot_water_only": "Hot water only",
+                    "stand_by": "Standby"
+                },
+                "state_attributes": {
+                    "operation_list": {
+                        "state": {
+                            "heating": "Heating",
+                            "hot_water_boost": "Hot water boost",
+                            "hot_water_only": "Hot water only",
+                            "stand_by": "Standby"
+                        }
+                    },
+                    "operation_mode": {
+                        "state": {
+                            "heating": "Heating",
+                            "hot_water_boost": "Hot water boost",
+                            "hot_water_only": "Hot water only",
+                            "stand_by": "Standby"
+                        }
+                    }
+                }
+            }
         }
     }
 }

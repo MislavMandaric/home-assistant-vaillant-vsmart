@@ -11,7 +11,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
-from .entity import VaillantCoordinator, VaillantEntity
+from .entity import VaillantCoordinator, VaillantModuleEntity
 from homeassistant.const import ENERGY_WATT_HOUR, PERCENTAGE
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.components.sensor import (
@@ -63,20 +63,8 @@ async def async_setup_entry(
     async_add_devices(new_devices)
 
 
-class VaillantBatterySensor(VaillantEntity, SensorEntity):
+class VaillantBatterySensor(VaillantModuleEntity, SensorEntity):
     """Vaillant vSMART Sensor."""
-
-    @property
-    def unique_id(self) -> str:
-        """Return a unique ID to use for this entity."""
-
-        return f"{self._module.id}_battery"
-
-    @property
-    def name(self) -> str:
-        """Return the name of the sensor."""
-
-        return f"{self._module.module_name} Battery"
 
     @property
     def entity_category(self) -> EntityCategory:
@@ -97,10 +85,10 @@ class VaillantBatterySensor(VaillantEntity, SensorEntity):
         return SensorStateClass.MEASUREMENT
 
     @property
-    def native_value(self) -> str:
+    def native_value(self) -> int:
         """Return current value of battery level."""
 
-        return str(self._module.battery_percent)
+        return self._module.battery_percent
 
     @property
     def native_unit_of_measurement(self) -> str:

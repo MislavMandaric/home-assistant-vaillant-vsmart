@@ -10,7 +10,7 @@ from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
-from .entity import VaillantCoordinator, VaillantEntity
+from .entity import VaillantCoordinator, VaillantProgramEntity
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -31,20 +31,14 @@ async def async_setup_entry(
     async_add_devices(new_devices)
 
 
-class VaillantScheduleSelect(VaillantEntity, SelectEntity):
+class VaillantScheduleSelect(VaillantProgramEntity, SelectEntity):
     """Vaillant vSMART Select."""
-
-    @property
-    def unique_id(self) -> str:
-        """Return a unique ID to use for this entity."""
-
-        return self._program.id
 
     @property
     def name(self) -> str:
         """Return the name of the select."""
 
-        return f"{self._module.module_name} {self._program.name} Profile"
+        return self._program.name
 
     @property
     def entity_category(self) -> EntityCategory:

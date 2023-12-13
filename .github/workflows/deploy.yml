@@ -6,9 +6,9 @@ on:
 
 jobs:
   validate:
-  
+
     runs-on: "ubuntu-latest"
-    
+
     steps:
         - uses: "actions/checkout@v2"
         - name: HACS validation
@@ -27,11 +27,11 @@ jobs:
       name: prerelease
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         fetch-depth: 0
     - name: Python Semantic Release
-      uses: python-semantic-release/python-semantic-release@v7.32.2
+      uses: python-semantic-release/python-semantic-release@v8.5.0
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         additional_options: --prerelease
@@ -45,10 +45,10 @@ jobs:
       name: release
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         fetch-depth: 0
     - name: Python Semantic Release
-      uses: python-semantic-release/python-semantic-release@v7.32.2
+      uses: python-semantic-release/python-semantic-release@v8.5.0
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
