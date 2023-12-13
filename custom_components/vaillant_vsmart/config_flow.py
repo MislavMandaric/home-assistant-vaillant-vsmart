@@ -53,7 +53,7 @@ class VaillantFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     async def _async_step_all(
         self, step_id: str, abort_reason: str, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
-        """Generic flow step that handles both user and reauth steps."""
+        """Handle both user and reauth steps in a generic flow step."""
 
         if user_input is None:
             user_input = self._init_user_input()
@@ -121,7 +121,7 @@ class VaillantFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
     def _init_user_input(self) -> dict[str, Any]:
-        """Initializes user input data from configs init data."""
+        """Initialize user input data from configs init data."""
 
         data = self.init_data
 

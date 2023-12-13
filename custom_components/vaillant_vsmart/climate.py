@@ -88,14 +88,12 @@ class VaillantClimate(VaillantModuleEntity, ClimateEntity):
 
     @property
     def hvac_action(self) -> HVACAction:
-        """
-        Return the currently running HVAC action.
-        """
+        """Return the currently running HVAC action."""
 
         if self._device.system_mode in [SystemMode.FROSTGUARD, SystemMode.SUMMER]:
             return HVACAction.OFF
 
-        if self._module.boiler_status == True:
+        if self._module.boiler_status is True:
             return HVACAction.HEATING
 
         return HVACAction.IDLE
@@ -108,9 +106,7 @@ class VaillantClimate(VaillantModuleEntity, ClimateEntity):
 
     @property
     def hvac_mode(self) -> HVACMode:
-        """
-        Return currently selected HVAC operation mode.
-        """
+        """Return currently selected HVAC operation mode."""
 
         if self._module.setpoint_manual.setpoint_activate:
             return HVACMode.HEAT

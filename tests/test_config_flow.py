@@ -66,7 +66,7 @@ async def test_successful_config_flow(hass, bypass_get_data):
 # validation of the input config.
 async def test_failed_config_flow(hass, error_on_get_data):
     """Test a failed config flow due to credential validation failure."""
-    
+
     result = await hass.config_entries.flow.async_init(
         DOMAIN, context={"source": config_entries.SOURCE_USER}
     )

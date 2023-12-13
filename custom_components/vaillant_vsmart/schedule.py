@@ -1,3 +1,5 @@
+"""TODO."""
+
 from datetime import datetime, timedelta
 
 from vaillant_netatmo_api.thermostat import Program, TimeSlot, Zone
@@ -6,7 +8,7 @@ from vaillant_netatmo_api.thermostat import Program, TimeSlot, Zone
 def map_program_to_schedule(
     schedule_entity_id: str, profile_entity_id: str, program: Program
 ) -> dict:
-    """TODO"""
+    """TODO."""
 
     daily_slots = program.get_timeslots_for_today()
 
@@ -29,7 +31,7 @@ def map_program_to_schedule(
 
 
 def map_timetable_to_timestamps(timetable: list[TimeSlot]) -> list[str]:
-    """TODO"""
+    """TODO."""
 
     timestamps = []
 
@@ -48,7 +50,7 @@ def map_timetable_to_timestamps(timetable: list[TimeSlot]) -> list[str]:
 
 
 def map_timetable_to_next_entries(timetable: list[TimeSlot]) -> list[int]:
-    """TODO"""
+    """TODO."""
 
     previous_entries = []
     next_entries = []
@@ -67,7 +69,7 @@ def map_timetable_to_timeslots(
     timetable: list[TimeSlot],
     zones: list[Zone],
 ) -> list[dict]:
-    """TODO"""
+    """TODO."""
 
     r = []
 
@@ -96,6 +98,6 @@ def map_timetable_to_timeslots(
 
 
 def format_time(time_slot: TimeSlot) -> str:
-    """Returns a formatted start time for the time slot."""
+    """Return a formatted start time for the time slot."""
 
     return time_slot.time.isoformat()
