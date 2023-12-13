@@ -106,9 +106,7 @@ class VaillantWaterHeater(VaillantDeviceEntity, WaterHeaterEntity):
 
     @property
     def current_operation(self) -> str:
-        """
-        Return currently selected operation mode.
-        """
+        """Return currently selected operation mode."""
         if self._device.setpoint_hwb.setpoint_activate:
             return OPERATION_HOT_WATER_BOOST
 

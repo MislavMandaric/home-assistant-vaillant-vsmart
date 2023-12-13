@@ -1,17 +1,15 @@
+"""TODO."""
+
 import logging
 
 import voluptuous as vol
 from homeassistant.helpers import config_validation as cv, entity_registry
-from homeassistant.components.http import HomeAssistantView
-from homeassistant.components.http.data_validator import RequestDataValidator
 from homeassistant.core import HomeAssistant
 from homeassistant.components.websocket_api import (
     decorators,
     ActiveConnection,
 )
-from homeassistant.helpers.dispatcher import async_dispatcher_connect
 
-from vaillant_netatmo_api.thermostat import Program
 
 from .const import DOMAIN, SWITCH, SELECT
 from .entity import VaillantCoordinator
@@ -37,7 +35,7 @@ async def websocket_get_schedules(
     er = entity_registry.async_get(hass)
 
     schedule: list[dict] = []
-    for entry_id in hass.data[DOMAIN].keys():
+    for entry_id in hass.data[DOMAIN]:
         coordinator: VaillantCoordinator = hass.data[DOMAIN][entry_id]
         for program in coordinator.data.programs.values():
             schedule_entity_id = er.async_get_entity_id(SWITCH, DOMAIN, program.id)
@@ -66,7 +64,7 @@ async def websocket_get_schedule_item(
 
     er = entity_registry.async_get(hass)
 
-    for entry_id in hass.data[DOMAIN].keys():
+    for entry_id in hass.data[DOMAIN]:
         coordinator: VaillantCoordinator = hass.data[DOMAIN][entry_id]
 
         program = coordinator.data.programs.get(msg["schedule_id"])
@@ -113,7 +111,7 @@ async def websocket_get_tags(
 
 
 async def async_register_websockets(hass: HomeAssistant) -> None:
-    """TODO"""
+    """TODO."""
 
     hass.components.websocket_api.async_register_command(websocket_get_schedules)
     hass.components.websocket_api.async_register_command(websocket_get_schedule_item)
