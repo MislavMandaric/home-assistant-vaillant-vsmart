@@ -2,7 +2,7 @@
 from datetime import timedelta
 import logging
 from typing import Any
-
+from datetime import datetime, timedelta
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import (
@@ -13,6 +13,9 @@ from homeassistant.helpers.update_coordinator import (
 from vaillant_netatmo_api import (
     ApiException,
     Device,
+    MeasurementItem,
+    MeasurementScale,
+    MeasurementType,
     Module,
     Program,
     ThermostatClient,
@@ -27,10 +30,56 @@ UPDATE_INTERVAL = timedelta(minutes=5)
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
+class EnergyMeasures:
+    """Class to represent energy measures."""
+
+    def __init__(
+        self,
+        gas_heating: MeasurementItem,
+        gas_water: MeasurementItem,
+        elec_heating: MeasurementItem,
+        elec_water: MeasurementItem,
+    ) -> None:
+        """Initialize."""
+        self._gas_heating = gas_heating
+        self._gas_water = gas_water
+        self._elec_heating = elec_heating
+        self._elec_water = elec_water
+
+    @property
+    def gas_heating(self) -> MeasurementItem:
+        """Retrun value of gas_heating measurement"""
+
+        return self._gas_heating
+
+    @property
+    def gas_water(self) -> MeasurementItem:
+        """Retrun value of gas_water measurement"""
+
+        return self._gas_water
+
+    @property
+    def elec_heating(self) -> MeasurementItem:
+        """Retrun value of gas_heating measurement"""
+
+        return self._elec_heating
+
+    @property
+    def elec_water(self) -> MeasurementItem:
+        """Retrun value of gas_water measurement"""
+
+        return self._elec_water
+
+
 class VaillantData:
     """Class holding data which coordinator provides to the entity."""
 
-    def __init__(self, client: ThermostatClient, devices: list[Device]) -> None:
+    def __init__(
+        self,
+        client: ThermostatClient,
+        devices: list[Device],
+        energy_measures: dict[str, EnergyMeasures],
+    ) -> None:
         """Initialize."""
 
         self.client = client
@@ -44,6 +93,7 @@ class VaillantData:
             for module in device.modules
             for program in module.therm_program_list
         }
+        self.energy_measures = energy_measures
 
 
 class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
@@ -71,13 +121,50 @@ class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
 
         try:
             devices = await self._client.async_get_thermostats_data()
+            measured_energy = await self.get_all_measurements(devices)
 
-            return VaillantData(self._client, devices)
+            return VaillantData(self._client, devices, measured_energy)
         except RequestUnauthorizedException as ex:
             raise ConfigEntryAuthFailed from ex
         except ApiException as ex:
             _LOGGER.exception(ex)
             raise UpdateFailed(f"Error communicating with API: {ex}") from ex
+
+    async def get_all_measurements(self, devices: list[Device]) -> MeasurementItem:
+        """Returns all measurements for devices"""
+        return {
+            module.id: EnergyMeasures(heating, water, elec_heating, elec_water)
+            for device in devices
+            for module in device.modules
+            for heating in await self._client.async_get_measure(
+                device.id,
+                module.id,
+                MeasurementType.SUM_ENERGY_GAS_HEATING,
+                MeasurementScale.DAY,
+                datetime.now() - timedelta(days=7),
+            )
+            for water in await self._client.async_get_measure(
+                device.id,
+                module.id,
+                MeasurementType.SUM_ENERGY_GAS_WATER,
+                MeasurementScale.DAY,
+                datetime.now() - timedelta(days=7),
+            )
+            for elec_heating in await self._client.async_get_measure(
+                device.id,
+                module.id,
+                MeasurementType.SUM_ENERGY_ELEC_HEATING,
+                MeasurementScale.DAY,
+                datetime.now() - timedelta(days=7),
+            )
+            for elec_water in await self._client.async_get_measure(
+                device.id,
+                module.id,
+                MeasurementType.SUM_ENERGY_ELEC_WATER,
+                MeasurementScale.DAY,
+                datetime.now() - timedelta(days=7),
+            )
+        }
 
 
 class VaillantDeviceEntity(CoordinatorEntity[VaillantData]):
