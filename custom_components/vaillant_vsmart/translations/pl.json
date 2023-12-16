@@ -2,10 +2,10 @@
     "config": {
         "step": {
             "user": {
-                "description": "Jeśli konfigurujesz komponent po raz pierwszy i potrzebujesz wytycznych, sprawdź [stronę społeczności](https://community.home-assistant.io/t/added-support-for-vaillant-thermostat-how-to-integrate-in-official-release/31858). Tam dowiesz się, jak wydobyć identyfikator klienta i sekret klienta.",
+                "description": "Jeśli konfigurujesz komponent po raz pierwszy i potrzebujesz wskazówek, sprawdź [stronę społeczności](https://community.home-assistant.io/t/added-support-for-vaillant-thermostat-how-to-integrate-in-official-release/31858). Tam dowiesz się, jak wydobyć identyfikator klienta i sekretny klucz klienta.",
                 "data": {
-                    "client_id": "Identyfikator klienta",
-                    "client_secret": "Sekret klienta",
+                    "client_id": "ID klienta",
+                    "client_secret": "Sekretny klucz klienta",
                     "username": "Nazwa użytkownika",
                     "password": "Hasło",
                     "user_prefix": "Prefiks użytkownika",
@@ -13,10 +13,10 @@
                 }
             },
             "reauth": {
-                "description": "Tokeny używane przez komponent wygasły i musisz ponownie uwierzytelnić się w API. Ponieważ twoje dane uwierzytelniające nigdy nie są przechowywane, musisz wprowadzić je ponownie.",
+                "description": "Tokeny używane przez komponent wygasły i musisz ponownie uwierzytelnić za pomocą interfejsu. Ponieważ twoje dane uwierzytelniające nie są przechowywane, musisz wprowadzić je ponownie.",
                 "data": {
-                    "client_id": "Identyfikator klienta",
-                    "client_secret": "Sekret klienta",
+                    "client_id": "ID klienta",
+                    "client_secret": "Klucz klienta",
                     "username": "Nazwa użytkownika",
                     "password": "Hasło",
                     "user_prefix": "Prefiks użytkownika",
