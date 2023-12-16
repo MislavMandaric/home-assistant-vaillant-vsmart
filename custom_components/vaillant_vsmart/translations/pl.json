@@ -2,10 +2,10 @@
     "config": {
         "step": {
             "user": {
-                "description": "Jeśli konfigurujesz komponent po raz pierwszy i potrzebujesz wskazówek, sprawdź [strona społeczności](https://community.home-assistant.io/t/added-support-for-vaillant-thermostat-how-to-integrate-in-official-release/31858). Możesz tam dowiedzieć się, jak wyodrębnić identyfikator klienta i klucz klienta.",
+                "description": "Jeśli konfigurujesz komponent po raz pierwszy i potrzebujesz wytycznych, sprawdź [stronę społeczności](https://community.home-assistant.io/t/added-support-for-vaillant-thermostat-how-to-integrate-in-official-release/31858). Tam dowiesz się, jak wydobyć identyfikator klienta i sekret klienta.",
                 "data": {
-                    "client_id": "ID klienta",
-                    "client_secret": "Klucz klienta",
+                    "client_id": "Identyfikator klienta",
+                    "client_secret": "Sekret klienta",
                     "username": "Nazwa użytkownika",
                     "password": "Hasło",
                     "user_prefix": "Prefiks użytkownika",
@@ -13,10 +13,10 @@
                 }
             },
             "reauth": {
-                "description": "Tokeny używane przez komponent wygasły i musisz ponownie uwierzytelnić się za pomocą interfejsu API. Ponieważ Twoje dane logowania nigdy nie są przechowywane, musisz wprowadzić je ponownie.",
+                "description": "Tokeny używane przez komponent wygasły i musisz ponownie uwierzytelnić się w API. Ponieważ twoje dane uwierzytelniające nigdy nie są przechowywane, musisz wprowadzić je ponownie.",
                 "data": {
-                    "client_id": "ID klienta",
-                    "client_secret": "Klucz klienta",
+                    "client_id": "Identyfikator klienta",
+                    "client_secret": "Sekret klienta",
                     "username": "Nazwa użytkownika",
                     "password": "Hasło",
                     "user_prefix": "Prefiks użytkownika",
@@ -25,14 +25,44 @@
             }
         },
         "error": {
-            "invalid_auth": "Błąd autoryzacji",
-            "cannot_connect": "Błąd połączenia",
-            "unknown": "Niespodziewany błąd"
+            "invalid_auth": "Nieprawidłowe uwierzytelnienie",
+            "cannot_connect": "Nie udało się połączyć",
+            "unknown": "Nieoczekiwany błąd"
         },
         "abort": {
-            "reauth_successful": "Pomyślne ponowne uwierzytelnienie",
-            "already_in_progress": "Konfiguracja jest już w toku",
-            "already_configured": "Konto wstępnie skonfigurowane"
+            "reauth_successful": "Ponowne uwierzytelnienie powiodło się",
+            "already_in_progress": "Proces konfiguracji jest już w toku",
+            "already_configured": "Konto jest już skonfigurowane"
+        }
+    },
+    "entity": {
+        "water_heater": {
+            "vaillant": {
+                "state": {
+                    "heating": "Ogrzewanie",
+                    "hot_water_boost": "Doładowanie ciepłej wody",
+                    "hot_water_only": "Tylko ciepła woda",
+                    "stand_by": "Tryb czuwania"
+                },
+                "state_attributes": {
+                    "operation_list": {
+                        "state": {
+                            "heating": "Ogrzewanie",
+                            "hot_water_boost": "Doładowanie ciepłej wody",
+                            "hot_water_only": "Tylko ciepła woda",
+                            "stand_by": "Tryb czuwania"
+                        }
+                    },
+                    "operation_mode": {
+                        "state": {
+                            "heating": "Ogrzewanie",
+                            "hot_water_boost": "Doładowanie ciepłej wody",
+                            "hot_water_only": "Tylko ciepła woda",
+                            "stand_by": "Tryb czuwania"
+                        }
+                    }
+                }
+            }
         }
     }
 }
