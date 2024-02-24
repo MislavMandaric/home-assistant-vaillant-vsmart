@@ -1,8 +1,10 @@
 """Vaillant vSMART entity classes."""
+import datetime
 from datetime import timedelta
 import logging
 from typing import Any
 
+import jsonpickle
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import (
@@ -16,21 +18,29 @@ from vaillant_netatmo_api import (
     Module,
     Program,
     ThermostatClient,
-    RequestUnauthorizedException,
+    RequestUnauthorizedException, MeasurementType, MeasurementScale, Measured, MeasurementItem,
 )
 
-from .const import DOMAIN
-
+from .const import DOMAIN, MEASUREMENT_SENSORS, VaillantSensorEntityDescription
 
 UPDATE_INTERVAL = timedelta(minutes=5)
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
+class VaillantDataMeasure:
+    def __init__(self, device: Device, module:Module, sensor: VaillantSensorEntityDescription,  measures: list[MeasurementItem],
+                 last_reset: datetime.datetime):
+        self.last_reset = last_reset
+        self.device = device
+        self.module = module
+        self.sensor = sensor
+        self.measures = measures
+
 
 class VaillantData:
     """Class holding data which coordinator provides to the entity."""
 
-    def __init__(self, client: ThermostatClient, devices: list[Device]) -> None:
+    def __init__(self, client: ThermostatClient, devices: list[Device], measurements: list[VaillantDataMeasure]) -> None:
         """Initialize."""
 
         self.client = client
@@ -44,6 +54,7 @@ class VaillantData:
             for module in device.modules
             for program in module.therm_program_list
         }
+        self.measurements = measurements
 
 
 class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
@@ -71,8 +82,34 @@ class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
 
         try:
             devices = await self._client.async_get_thermostats_data()
+            measurements: list[VaillantDataMeasure] = []
+            for device in devices:
+                for module in device.modules:
+                    # Add measures based on 5 minutes scale and delays as this is the refresh delay of the integration
+                    _LOGGER.debug("Vaillant update")
+                    try:
+                        for sensor in MEASUREMENT_SENSORS:
+                            # Range : from current hour, 0min, 0sec to the end of current hour (and 0min, 0sec)
+                            date_begin = datetime.datetime.now().replace(hour=0, minute=0, second=0,
+                                                                         microsecond=0)
+                            date_end = date_begin + datetime.timedelta(days=1)
+                            measured = await self._client.async_get_measure(device_id=device.id, module_id=module.id,
+                                                                 type=sensor.measurement_type,
+                                                                 scale=MeasurementScale.DAY,
+                                                                 date_begin=date_begin,
+                                                                 date_end=date_end)
 
-            return VaillantData(self._client, devices)
+                            _LOGGER.debug("Vaillant update measure for %s (%s -> %s): %s",sensor.sensor_name,
+                                          date_begin.strftime("%m/%d/%Y %H:%M:%S"),
+                                          date_end.strftime("%m/%d/%Y %H:%M:%S"),
+                                          jsonpickle.encode(measured))
+                            measurements.append(VaillantDataMeasure(device, module, sensor, measured, date_begin))
+                            # Store the result in the module measured field
+                            # setattr(module.measured, MeasurementType.SUM_ENERGY_GAS_HEATING.value, measured)
+                    except Exception as ex:
+                        _LOGGER.debug("Vaillant error during extraction of measures", exc_info=ex)
+
+            return VaillantData(self._client, devices, measurements)
         except RequestUnauthorizedException as ex:
             raise ConfigEntryAuthFailed from ex
         except ApiException as ex:
