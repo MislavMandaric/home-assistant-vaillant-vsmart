@@ -85,11 +85,11 @@ class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
             measurements: list[VaillantDataMeasure] = []
             for device in devices:
                 for module in device.modules:
-                    # Add measures based on 5 minutes scale and delays as this is the refresh delay of the integration
+                    # Add measurements of gaz consumption (list defined in const.py)
                     _LOGGER.debug("Vaillant update")
                     try:
                         for sensor in MEASUREMENT_SENSORS:
-                            # Range : from current hour, 0min, 0sec to the end of current hour (and 0min, 0sec)
+                            # Range : from the start of the current day until the end of the day
                             date_begin = datetime.datetime.now().replace(hour=0, minute=0, second=0,
                                                                          microsecond=0)
                             date_end = date_begin + datetime.timedelta(days=1)

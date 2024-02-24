@@ -98,7 +98,8 @@ class VaillantGasSensor(VaillantModuleEntity, SensorEntity):
 
     @property
     def name(self) -> str | UndefinedType | None:
-        # Bug : name from translation/<lang>.json is not picked up
+        # TODO bug : name from translation/<lang>.json is not picked up
+        # I suspect that these translation files are read from github directly and not from component folder
         return self.measurement.sensor.sensor_name
 
     @property

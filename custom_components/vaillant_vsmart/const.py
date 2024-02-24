@@ -18,7 +18,7 @@ PLATFORMS = [CLIMATE, SELECT, SENSOR, SWITCH, WATER_HEATER]
 CONF_APP_VERSION = "app_version"
 CONF_USER_PREFIX = "user_prefix"
 
-
+# Sensor entity descriptions for measurements
 class VaillantSensorEntityDescription:
     def __init__(self, key: str, measurement_type: MeasurementType, sensor_name: str, device_class: SensorDeviceClass, icon: str,
                  unit:str, conversion: float = 1):
@@ -30,7 +30,7 @@ class VaillantSensorEntityDescription:
         self.unit = unit
         self.conversion = conversion
 
-
+# List of measurement sensors to create
 MEASUREMENT_SENSORS: list[VaillantSensorEntityDescription] = [
     VaillantSensorEntityDescription(key="gaz_heating",
                                     measurement_type=MeasurementType.SUM_ENERGY_GAS_HEATING,
