@@ -11,7 +11,7 @@ from homeassistant.components.sensor import (
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import PERCENTAGE
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import UndefinedType
@@ -119,18 +119,25 @@ class VaillantGasSensor(VaillantModuleEntity, SensorEntity):
 
     @property
     def last_reset(self) -> datetime | None:
-        return self.measurement.last_reset
+        data: VaillantData = self.coordinator.data
+        for measurement in data.measurements:
+            if measurement.sensor.key == self.measurement.sensor.key:
+                return measurement.last_reset
+        return None
 
     @property
     def native_value(self) -> float:
         """Return current value."""
         value: float = 0
-        if self.measurement.measures:
-            for measure in self.measurement.measures:
-                if measure.value:
-                    for val in measure.value:
-                        value += val
-        value *= self.measurement.sensor.conversion
+        data: VaillantData = self.coordinator.data
+        for measurement in data.measurements:
+            if measurement.sensor.key == self.measurement.sensor.key:
+                if measurement.measures:
+                    for measure in measurement.measures:
+                        if measure.value:
+                            for val in measure.value:
+                                value += val
+                value *= measurement.sensor.conversion
         return value
 
     @property
@@ -141,3 +148,10 @@ class VaillantGasSensor(VaillantModuleEntity, SensorEntity):
     @property
     def icon(self) -> str | None:
         return self.measurement.sensor.icon
+
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        """Handle updated data from the coordinator."""
+        _LOGGER.debug("Vaillant updated sensor value %s : %.2f", self.measurement.sensor.sensor_name,
+                      self.native_value)
+        self.async_write_ha_state()

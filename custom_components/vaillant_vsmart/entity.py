@@ -67,19 +67,17 @@ class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
             hass,
             _LOGGER,
             name=DOMAIN,
-            update_method=self._update_method,
             update_interval=UPDATE_INTERVAL,
         )
 
         self._client = client
 
-    async def _update_method(self):
+    async def _async_update_data(self):
         """Fetch data from API endpoint.
 
         This is the place to pre-process the data to lookup tables
         so entities can quickly look up their data.
         """
-
         try:
             devices = await self._client.async_get_thermostats_data()
             measurements: list[VaillantDataMeasure] = []
