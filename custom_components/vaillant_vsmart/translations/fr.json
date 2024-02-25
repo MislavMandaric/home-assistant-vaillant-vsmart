@@ -1,38 +1,82 @@
 {
-    "config": {
-        "step": {
-            "user": {
-                "description": "Si vous configurez ce composant pour la première fois et avez besoin d'aide, veuillez consulter la [page de la communauté](https://community.home-assistant.io/t/added-support-for-vaillant-thermostat-how-to-integrate-in-official-release/31858). Vous y trouverez comment extraire l'Identification et la Clé secréte du client.", 
-                "data": {
-                    "client_id": "Identification du client",
-                    "client_secret": "Clé secrète du client",
-                    "username": "Nom d'utilisateur",
-                    "password": "Mot de passe utilisateur",
-                    "user_prefix": "Préfixe utilisateur",
-                    "app_version": "Version de l'application"
-                }
-            },
-            "reauth": {
-                "description": "Les jetons d'identification du composant ont expiré et vous avez besoin de vous ré-authentifier à l'API. Comme vos identifiants ne sont jamais stockés, vous devrez les introduire de nouveau.",
-                "data": {
-                    "client_id": "Identification du client",
-                    "client_secret": "Clé secrète du client",
-                    "username": "Nom d'utilisateur",
-                    "password": "Mot de passe utilisateur",
-                    "user_prefix": "Préfixe utilisateur",
-                    "app_version": "Version de l'application"
-                }
-            }
-        },
-        "error": {
-            "invalid_auth": "Erreur d'authentification",
-            "cannot_connect": "Erreur de connection",
-            "unknown": "Erreur inconnue"
-        },
-        "abort": {
-            "reauth_successful": "Authentification réussie",
-            "already_in_progress": "La configuration de cet utilisateur est déjà en cours",
-            "already_configured": "La configuration de cet utilisateur a déjà été réalisée"
+  "config": {
+    "step": {
+      "user": {
+        "description": "Si vous configurez ce composant pour la première fois et avez besoin d'aide, veuillez consulter la [page de la communauté](https://community.home-assistant.io/t/added-support-for-vaillant-thermostat-how-to-integrate-in-official-release/31858). Vous y trouverez comment extraire l'Identification et la Clé secréte du client.",
+        "data": {
+          "client_id": "Identification du client",
+          "client_secret": "Clé secrète du client",
+          "username": "Nom d'utilisateur",
+          "password": "Mot de passe utilisateur",
+          "user_prefix": "Préfixe utilisateur",
+          "app_version": "Version de l'application"
         }
+      },
+      "reauth": {
+        "description": "Les jetons d'identification du composant ont expiré et vous avez besoin de vous ré-authentifier à l'API. Comme vos identifiants ne sont jamais stockés, vous devrez les introduire de nouveau.",
+        "data": {
+          "client_id": "Identification du client",
+          "client_secret": "Clé secrète du client",
+          "username": "Nom d'utilisateur",
+          "password": "Mot de passe utilisateur",
+          "user_prefix": "Préfixe utilisateur",
+          "app_version": "Version de l'application"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Erreur d'authentification",
+      "cannot_connect": "Erreur de connection",
+      "unknown": "Erreur inconnue"
+    },
+    "abort": {
+      "reauth_successful": "Authentification réussie",
+      "already_in_progress": "La configuration de cet utilisateur est déjà en cours",
+      "already_configured": "La configuration de cet utilisateur a déjà été réalisée"
     }
+  },
+  "entity": {
+    "sensor": {
+      "gaz_heating": {
+        "name": "Consommation de gaz chauffage"
+      },
+      "water_heating": {
+        "name": "Consommation de gaz eau chaude"
+      },
+      "elec_heating": {
+        "name": "Consommation électrique chauffage"
+      },
+      "elec_water_heating": {
+        "name": "Consommation électrique eau chaude"
+      }
+    },
+    "water_heater": {
+      "vaillant": {
+        "state": {
+          "heating": "En chauffe",
+          "hot_water_boost": "Boost eau chaude",
+          "hot_water_only": "Eau chaude uniquement",
+          "stand_by": "En veille"
+        },
+        "state_attributes": {
+          "operation_list": {
+            "state": {
+              "heating": "En chauffe",
+              "hot_water_boost": "Boost eau chaude",
+              "hot_water_only": "Eau chaude uniquement",
+              "stand_by": "En veille"
+            }
+          },
+          "operation_mode": {
+            "state": {
+              "heating": "En veille",
+              "hot_water_boost": "Boost eau chaudet",
+              "hot_water_only": "Eau chaude uniquement",
+              "stand_by": "En veille"
+            }
+          }
+        }
+      }
+    }
+  }
 }
