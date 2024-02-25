@@ -37,7 +37,7 @@ async def async_setup_entry(
             new_devices.append(VaillantBatterySensor(coordinator, device.id, module.id))
 
     for measurement in coordinator.data.measurements:
-        new_devices.append(VaillantGasSensor(coordinator, measurement.device.id, measurement.module.id, measurement))
+        new_devices.append(VaillantEnergySensor(coordinator, measurement.device.id, measurement.module.id, measurement))
 
     async_add_devices(new_devices)
 
@@ -76,7 +76,7 @@ class VaillantBatterySensor(VaillantModuleEntity, SensorEntity):
         return PERCENTAGE
 
 
-class VaillantGasSensor(VaillantModuleEntity, SensorEntity):
+class VaillantEnergySensor(VaillantModuleEntity, SensorEntity):
     """Vaillant vSMART Gas Sensor."""
 
     def __init__(
@@ -107,6 +107,10 @@ class VaillantGasSensor(VaillantModuleEntity, SensorEntity):
         return self.measurement.sensor.key
 
     @property
+    def entity_registry_enabled_default(self) -> bool:
+        return self.measurement.sensor.enabled
+
+    @property
     def device_class(self) -> SensorDeviceClass:
         """Return device class for this sensor."""
         return  self.measurement.sensor.device_class
@@ -130,6 +134,8 @@ class VaillantGasSensor(VaillantModuleEntity, SensorEntity):
         """Return current value."""
         value: float = 0
         data: VaillantData = self.coordinator.data
+        if data.measurements is None:
+            return 0
         for measurement in data.measurements:
             if measurement.sensor.key == self.measurement.sensor.key:
                 if measurement.measures:
@@ -155,3 +161,14 @@ class VaillantGasSensor(VaillantModuleEntity, SensorEntity):
         _LOGGER.debug("Vaillant updated sensor value %s : %.2f", self.measurement.sensor.sensor_name,
                       self.native_value)
         self.async_write_ha_state()
+
+    async def async_added_to_hass(self) -> None:
+        """Run when this Entity has been added to HA."""
+        # Enable extraction of data of this sensor from API
+        self.measurement.sensor.enabled = True
+        await super().async_added_to_hass()
+
+    async def async_will_remove_from_hass(self) -> None:
+        # Disable extraction of data of this sensor from API
+        self.measurement.sensor.enabled = False
+        await super().async_will_remove_from_hass()

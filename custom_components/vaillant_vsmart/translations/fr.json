@@ -42,6 +42,12 @@
       },
       "water_heating": {
         "name": "Consommation de gaz eau chaude"
+      },
+      "elec_heating": {
+        "name": "Consommation électrique chauffage"
+      },
+      "elec_water_heating": {
+        "name": "Consommation électrique eau chaude"
       }
     },
     "water_heater": {

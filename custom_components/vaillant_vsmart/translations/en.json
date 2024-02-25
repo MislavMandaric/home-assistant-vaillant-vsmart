@@ -42,6 +42,12 @@
       },
       "water_heating": {
         "name": "Water heating consumption"
+      },
+      "elec_heating": {
+        "name": "Electricity heating consumption"
+      },
+      "elec_water_heating": {
+        "name": "Electricity water heating consumption"
       }
     },
     "water_heater": {

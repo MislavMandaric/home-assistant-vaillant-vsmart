@@ -27,9 +27,11 @@ UPDATE_INTERVAL = timedelta(minutes=5)
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
+
 class VaillantDataMeasure:
-    def __init__(self, device: Device, module:Module, sensor: VaillantSensorEntityDescription,  measures: list[MeasurementItem],
-                 last_reset: datetime.datetime):
+    def __init__(self, device: Device, module: Module, sensor: VaillantSensorEntityDescription,
+                 measures: list[MeasurementItem] | None,
+                 last_reset: datetime.datetime | None):
         self.last_reset = last_reset
         self.device = device
         self.module = module
@@ -40,7 +42,8 @@ class VaillantDataMeasure:
 class VaillantData:
     """Class holding data which coordinator provides to the entity."""
 
-    def __init__(self, client: ThermostatClient, devices: list[Device], measurements: list[VaillantDataMeasure]) -> None:
+    def __init__(self, client: ThermostatClient, devices: list[Device],
+                 measurements: list[VaillantDataMeasure]) -> None:
         """Initialize."""
 
         self.client = client
@@ -87,17 +90,22 @@ class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
                     _LOGGER.debug("Vaillant update")
                     try:
                         for sensor in MEASUREMENT_SENSORS:
+                            if not sensor.enabled:
+                                _LOGGER.debug("Vaillant sensor %s is disabled, data won't be extracted",
+                                              sensor.sensor_name)
+                                measurements.append(VaillantDataMeasure(device, module, sensor, None, None))
+                                continue
                             # Range : from the start of the current day until the end of the day
                             date_begin = datetime.datetime.now().replace(hour=0, minute=0, second=0,
                                                                          microsecond=0)
                             date_end = date_begin + datetime.timedelta(days=1)
                             measured = await self._client.async_get_measure(device_id=device.id, module_id=module.id,
-                                                                 type=sensor.measurement_type,
-                                                                 scale=MeasurementScale.DAY,
-                                                                 date_begin=date_begin,
-                                                                 date_end=date_end)
+                                                                            type=sensor.measurement_type,
+                                                                            scale=MeasurementScale.DAY,
+                                                                            date_begin=date_begin,
+                                                                            date_end=date_end)
 
-                            _LOGGER.debug("Vaillant update measure for %s (%s -> %s): %s",sensor.sensor_name,
+                            _LOGGER.debug("Vaillant update measure for %s (%s -> %s): %s", sensor.sensor_name,
                                           date_begin.strftime("%m/%d/%Y %H:%M:%S"),
                                           date_end.strftime("%m/%d/%Y %H:%M:%S"),
                                           jsonpickle.encode(measured))
@@ -119,9 +127,9 @@ class VaillantDeviceEntity(CoordinatorEntity[VaillantData]):
     """Base class for Vaillant device entities."""
 
     def __init__(
-        self,
-        coordinator: DataUpdateCoordinator[VaillantData],
-        device_id: str,
+            self,
+            coordinator: DataUpdateCoordinator[VaillantData],
+            device_id: str,
     ):
         """Initialize."""
 
@@ -169,10 +177,10 @@ class VaillantModuleEntity(CoordinatorEntity[VaillantData]):
     """Base class for Vaillant module entities."""
 
     def __init__(
-        self,
-        coordinator: DataUpdateCoordinator[VaillantData],
-        device_id: str,
-        module_id: str,
+            self,
+            coordinator: DataUpdateCoordinator[VaillantData],
+            device_id: str,
+            module_id: str,
     ):
         """Initialize."""
 
@@ -228,11 +236,11 @@ class VaillantProgramEntity(CoordinatorEntity[VaillantData]):
     """Base class for Vaillant program entities."""
 
     def __init__(
-        self,
-        coordinator: DataUpdateCoordinator[VaillantData],
-        device_id: str,
-        module_id: str,
-        program_id: str,
+            self,
+            coordinator: DataUpdateCoordinator[VaillantData],
+            device_id: str,
+            module_id: str,
+            program_id: str,
     ):
         """Initialize."""
 
