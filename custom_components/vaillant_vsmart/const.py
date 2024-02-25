@@ -1,6 +1,6 @@
 """Constants for Vaillant vSMART."""
 from homeassistant.components.sensor import SensorEntityDescription, SensorDeviceClass
-from vaillant_netatmo_api import MeasurementType
+from vaillant_netatmo_api import MeasurementType, Device, Module
 
 # Base component constants
 NAME = "Vaillant vSMART"
@@ -23,7 +23,9 @@ CONF_USER_PREFIX = "user_prefix"
 class VaillantSensorEntityDescription:
     def __init__(self, key: str, measurement_type: MeasurementType, sensor_name: str, device_class: SensorDeviceClass,
                  icon: str,
-                 unit: str, conversion: float = 1, enabled=True):
+                 unit: str, conversion: float = 1, enabled=True,
+                 device: Device = None,
+                 module: Module = None):
         self.key = key
         self.measurement_type = measurement_type
         self.sensor_name: str = sensor_name
@@ -32,6 +34,8 @@ class VaillantSensorEntityDescription:
         self.unit = unit
         self.conversion = conversion
         self.enabled = enabled
+        self.device = device
+        self.module = module
 
 
 # List of measurement sensors to create
@@ -42,14 +46,16 @@ MEASUREMENT_SENSORS: list[VaillantSensorEntityDescription] = [
                                     icon="mdi:radiator",
                                     device_class=SensorDeviceClass.ENERGY,
                                     unit="kWh",
-                                    conversion=0.001),
+                                    conversion=0.001,
+                                    enabled=True),
     VaillantSensorEntityDescription(key="water_heating",
                                     measurement_type=MeasurementType.SUM_ENERGY_GAS_WATER,
                                     sensor_name="Gaz water heating",
                                     icon="mdi:bathtub",
                                     device_class=SensorDeviceClass.ENERGY,
                                     unit="kWh",
-                                    conversion=0.001),
+                                    conversion=0.001,
+                                    enabled=True),
     VaillantSensorEntityDescription(key="elec_heating",
                                     measurement_type=MeasurementType.SUM_ENERGY_ELEC_HEATING,
                                     sensor_name="Electricity heating",

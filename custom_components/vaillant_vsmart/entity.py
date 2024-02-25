@@ -1,4 +1,5 @@
 """Vaillant vSMART entity classes."""
+import copy
 import datetime
 from datetime import timedelta
 import logging
@@ -18,7 +19,7 @@ from vaillant_netatmo_api import (
     Module,
     Program,
     ThermostatClient,
-    RequestUnauthorizedException, MeasurementType, MeasurementScale, Measured, MeasurementItem,
+    RequestUnauthorizedException, MeasurementScale, MeasurementItem,
 )
 
 from .const import DOMAIN, MEASUREMENT_SENSORS, VaillantSensorEntityDescription
@@ -74,6 +75,7 @@ class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
         )
 
         self._client = client
+        self.sensors: list[VaillantSensorEntityDescription] = []
 
     async def _async_update_data(self):
         """Fetch data from API endpoint.
@@ -89,10 +91,23 @@ class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
                     # Add measurements of gaz consumption (list defined in const.py)
                     _LOGGER.debug("Vaillant update")
                     try:
-                        for sensor in MEASUREMENT_SENSORS:
-                            if not sensor.enabled:
+                        for measurement_sensor in MEASUREMENT_SENSORS:
+                            sensor: VaillantSensorEntityDescription | None = None
+                            for local_sensor in self.sensors:
+                                if (local_sensor.key == measurement_sensor.key
+                                        and local_sensor.device.id == device.id
+                                        and local_sensor.module.id == module.id):
+                                    sensor = local_sensor
+                                    break
+                            if sensor is None:
+                                sensor = copy.copy(measurement_sensor)
+                                sensor.device = device
+                                sensor.module = module
+                                self.sensors.append(sensor)
+
+                            if measurement_sensor.enabled is False:
                                 _LOGGER.debug("Vaillant sensor %s is disabled, data won't be extracted",
-                                              sensor.sensor_name)
+                                              measurement_sensor.sensor_name)
                                 measurements.append(VaillantDataMeasure(device, module, sensor, None, None))
                                 continue
                             # Range : from the start of the current day until the end of the day

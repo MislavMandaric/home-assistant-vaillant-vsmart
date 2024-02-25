@@ -18,7 +18,7 @@ from homeassistant.helpers.typing import UndefinedType
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from vaillant_netatmo_api import MeasurementType, MeasurementItem
 
-from .const import DOMAIN, SENSOR
+from .const import DOMAIN, SENSOR, VaillantSensorEntityDescription
 from .entity import VaillantCoordinator, VaillantModuleEntity, VaillantData, VaillantDataMeasure
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
@@ -36,8 +36,8 @@ async def async_setup_entry(
         for module in device.modules:
             new_devices.append(VaillantBatterySensor(coordinator, device.id, module.id))
 
-    for measurement in coordinator.data.measurements:
-        new_devices.append(VaillantEnergySensor(coordinator, measurement.device.id, measurement.module.id, measurement))
+    for sensor in coordinator.sensors:
+        new_devices.append(VaillantEnergySensor(coordinator, sensor))
 
     async_add_devices(new_devices)
 
@@ -82,38 +82,35 @@ class VaillantEnergySensor(VaillantModuleEntity, SensorEntity):
     def __init__(
         self,
         coordinator: DataUpdateCoordinator[VaillantData],
-        device_id: str,
-        module_id: str,
-        measurement: VaillantDataMeasure
-    ):
+        sensor: VaillantSensorEntityDescription):
         """Initialize."""
-        super().__init__(coordinator, device_id, module_id)
-        self.measurement = measurement
-        self.entity_id = f"{SENSOR}.{DOMAIN}_{self.measurement.sensor.sensor_name}"
+        super().__init__(coordinator, sensor.device.id, sensor.module.id)
+        self.sensor = sensor
+        self.entity_id = f"{SENSOR}.{DOMAIN}_{self.sensor.sensor_name}"
 
     @property
     def unique_id(self) -> str:
         """Return a unique ID to use for this entity."""
-        return ENTITY_ID_FORMAT.format(f"{self._module.id}_{self.measurement.sensor.sensor_name}")
+        return ENTITY_ID_FORMAT.format(f"{self.sensor.module.id}_{self.sensor.sensor_name}")
 
     @property
     def name(self) -> str | UndefinedType | None:
         # TODO bug : name from translation/<lang>.json is not picked up
         # I suspect that these translation files are read from github directly and not from component folder
-        return self.measurement.sensor.sensor_name
+        return self.sensor.sensor_name
 
     @property
     def translation_key(self) -> str | None:
-        return self.measurement.sensor.key
+        return self.sensor.key
 
     @property
     def entity_registry_enabled_default(self) -> bool:
-        return self.measurement.sensor.enabled
+        return self.sensor.enabled
 
     @property
     def device_class(self) -> SensorDeviceClass:
         """Return device class for this sensor."""
-        return  self.measurement.sensor.device_class
+        return  self.sensor.device_class
 
     @property
     def state_class(self) -> SensorStateClass:
@@ -125,7 +122,8 @@ class VaillantEnergySensor(VaillantModuleEntity, SensorEntity):
     def last_reset(self) -> datetime | None:
         data: VaillantData = self.coordinator.data
         for measurement in data.measurements:
-            if measurement.sensor.key == self.measurement.sensor.key:
+            if (measurement.sensor.key == self.sensor.key
+                    and measurement.sensor.module.id == self.sensor.module.id):
                 return measurement.last_reset
         return None
 
@@ -137,7 +135,8 @@ class VaillantEnergySensor(VaillantModuleEntity, SensorEntity):
         if data.measurements is None:
             return 0
         for measurement in data.measurements:
-            if measurement.sensor.key == self.measurement.sensor.key:
+            if (measurement.sensor.key == self.sensor.key
+                    and measurement.sensor.module.id == self.sensor.module.id):
                 if measurement.measures:
                     for measure in measurement.measures:
                         if measure.value:
@@ -149,26 +148,26 @@ class VaillantEnergySensor(VaillantModuleEntity, SensorEntity):
     @property
     def native_unit_of_measurement(self) -> str:
         """Return unit of measurement for the battery level."""
-        return self.measurement.sensor.unit
+        return self.sensor.unit
 
     @property
     def icon(self) -> str | None:
-        return self.measurement.sensor.icon
+        return self.sensor.icon
 
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
-        _LOGGER.debug("Vaillant updated sensor value %s : %.2f", self.measurement.sensor.sensor_name,
+        _LOGGER.debug("Vaillant updated sensor value %s : %.2f", self.sensor.sensor_name,
                       self.native_value)
         self.async_write_ha_state()
 
     async def async_added_to_hass(self) -> None:
         """Run when this Entity has been added to HA."""
         # Enable extraction of data of this sensor from API
-        self.measurement.sensor.enabled = True
+        self.sensor.enabled = True
         await super().async_added_to_hass()
 
     async def async_will_remove_from_hass(self) -> None:
         # Disable extraction of data of this sensor from API
-        self.measurement.sensor.enabled = False
+        self.sensor.enabled = False
         await super().async_will_remove_from_hass()
