@@ -2,7 +2,8 @@
 from __future__ import annotations
 
 import logging
-from datetime import datetime
+from datetime import datetime, date
+from decimal import Decimal
 
 from homeassistant.components.sensor import (
     SensorEntity,
@@ -14,7 +15,7 @@ from homeassistant.const import PERCENTAGE
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.typing import UndefinedType
+from homeassistant.helpers.typing import UndefinedType, StateType
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from vaillant_netatmo_api import MeasurementType, MeasurementItem
 
@@ -128,22 +129,26 @@ class VaillantEnergySensor(VaillantModuleEntity, SensorEntity):
         return None
 
     @property
-    def native_value(self) -> float:
+    def native_value(self) -> StateType | date | datetime | Decimal:
         """Return current value."""
         value: float = 0
         data: VaillantData = self.coordinator.data
         if data.measurements is None:
-            return 0
+            return None
+        found = False
         for measurement in data.measurements:
             if (measurement.sensor.key == self.sensor.key
                     and measurement.sensor.module.id == self.sensor.module.id):
+                found = True
                 if measurement.measures:
                     for measure in measurement.measures:
                         if measure.value:
                             for val in measure.value:
                                 value += val
                 value *= measurement.sensor.conversion
-        return value
+        if found:
+            return value
+        return None
 
     @property
     def native_unit_of_measurement(self) -> str:

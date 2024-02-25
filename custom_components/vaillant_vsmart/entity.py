@@ -99,13 +99,15 @@ class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
                                         and local_sensor.module.id == module.id):
                                     sensor = local_sensor
                                     break
+                            new_sensor = False
                             if sensor is None:
                                 sensor = copy.copy(measurement_sensor)
                                 sensor.device = device
                                 sensor.module = module
                                 self.sensors.append(sensor)
-
-                            if measurement_sensor.enabled is False:
+                                new_sensor = True
+                            # Don't extract sensor information if it is disabled and it is not the first refresh of the sensor
+                            if new_sensor is False and sensor.enabled is False:
                                 _LOGGER.debug("Vaillant sensor %s is disabled, data won't be extracted",
                                               measurement_sensor.sensor_name)
                                 measurements.append(VaillantDataMeasure(device, module, sensor, None, None))
