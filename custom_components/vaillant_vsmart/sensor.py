@@ -11,7 +11,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
-from .entity import VaillantCoordinator, VaillantModuleEntity
+from .entity import VaillantCoordinator, VaillantDeviceEntity, VaillantModuleEntity
 from homeassistant.const import ENERGY_WATT_HOUR, PERCENTAGE
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.components.sensor import (
@@ -31,33 +31,28 @@ async def async_setup_entry(
     coordinator: VaillantCoordinator = hass.data[DOMAIN][entry.entry_id]
 
     new_devices = [
-        VaillantBatterySensor(coordinator, device.id, module.id)
-        for device in coordinator.data.devices.values()
-        for module in device.modules
+        VaillantBatterySensor(coordinator, device_id, module_id)
+        for (device_id, module_id) in coordinator.data.modules.keys()
     ]
 
     new_devices += [
-        VaillantGasHeatingSensor(coordinator, device.id, module.id)
-        for device in coordinator.data.devices.values()
-        for module in device.modules
+        VaillantGasHeatingSensor(coordinator, device_id)
+        for device_id in coordinator.data.gas_heating_measurements.keys()
     ]
 
     new_devices += [
-        VaillantGasWaterSensor(coordinator, device.id, module.id)
-        for device in coordinator.data.devices.values()
-        for module in device.modules
+        VaillantGasWaterSensor(coordinator, device_id)
+        for device_id in coordinator.data.gas_water_measurements.keys()
     ]
 
     new_devices += [
-        VaillantElecHeatingSensor(coordinator, device.id, module.id)
-        for device in coordinator.data.devices.values()
-        for module in device.modules
+        VaillantElecHeatingSensor(coordinator, device_id)
+        for device_id in coordinator.data.elec_heating_measurements.keys()
     ]
 
     new_devices += [
-        VaillantElecWaterSensor(coordinator, device.id, module.id)
-        for device in coordinator.data.devices.values()
-        for module in device.modules
+        VaillantElecWaterSensor(coordinator, device_id)
+        for device_id in coordinator.data.elec_water_measurements.keys()
     ]
 
     async_add_devices(new_devices)
@@ -97,20 +92,20 @@ class VaillantBatterySensor(VaillantModuleEntity, SensorEntity):
         return PERCENTAGE
 
 
-class VaillantGasHeatingSensor(VaillantEntity, SensorEntity):
+class VaillantGasHeatingSensor(VaillantDeviceEntity, SensorEntity):
     """Vaillant vSMART Sensor."""
 
     @property
     def unique_id(self) -> str:
         """Return a unique ID to use for this entity."""
 
-        return f"{self._module.id}_gas_heating"
+        return f"{self._device.id}_gas_heating"
 
     @property
-    def name(self) -> str:
-        """Return the name of the sensor."""
+    def translation_key(self) -> str:
+        """Return the translation key of the sensor."""
 
-        return f"{self._module.module_name} Gas heating"
+        return "gas_heating"
 
     @property
     def entity_category(self) -> EntityCategory:
@@ -125,33 +120,23 @@ class VaillantGasHeatingSensor(VaillantEntity, SensorEntity):
         return SensorDeviceClass.ENERGY
 
     @property
-    def icon(self) -> str | None:
-        return "mdi:heating-coil"
-
-    @property
     def state_class(self) -> SensorStateClass:
         """Return state class for this sensor."""
 
         return SensorStateClass.TOTAL_INCREASING
 
     @property
-    def native_value(self) -> str:
+    def native_value(self) -> float:
         """Return current value of gas heating sensor."""
-        measures = self.coordinator.data.energy_measures.get(
-            self._module.id
-        ).gas_heating.value
+        measurement = self.coordinator.data.gas_heating_measurements.get(
+            self._device.id
+        )
 
-        return str(measures[measures.__len__() - 1])
+        if measurement:
+            if len(measurement.value) > 0:
+                return measurement.value[-1]
 
-    @property
-    def extra_state_attributes(self):
-        return {
-            "historical_values": str(
-                self.coordinator.data.energy_measures.get(
-                    self._module.id
-                ).gas_heating.value
-            )
-        }
+        return 0
 
     @property
     def native_unit_of_measurement(self) -> str:
@@ -160,20 +145,20 @@ class VaillantGasHeatingSensor(VaillantEntity, SensorEntity):
         return ENERGY_WATT_HOUR
 
 
-class VaillantGasWaterSensor(VaillantEntity, SensorEntity):
+class VaillantGasWaterSensor(VaillantDeviceEntity, SensorEntity):
     """Vaillant vSMART Sensor."""
 
     @property
     def unique_id(self) -> str:
         """Return a unique ID to use for this entity."""
 
-        return f"{self._module.id}_gas_water"
+        return f"{self._device.id}_gas_water"
 
     @property
-    def name(self) -> str:
-        """Return the name of the sensor."""
+    def translation_key(self) -> str:
+        """Return the translation key of the sensor."""
 
-        return f"{self._module.module_name} Gas water"
+        return "gas_water"
 
     @property
     def entity_category(self) -> EntityCategory:
@@ -188,33 +173,23 @@ class VaillantGasWaterSensor(VaillantEntity, SensorEntity):
         return SensorDeviceClass.ENERGY
 
     @property
-    def icon(self) -> str | None:
-        return "mdi:water-boiler"
-
-    @property
     def state_class(self) -> SensorStateClass:
         """Return state class for this sensor."""
 
         return SensorStateClass.TOTAL_INCREASING
 
     @property
-    def native_value(self) -> str:
+    def native_value(self) -> float:
         """Return current value of gas water sensor."""
-        measures = self.coordinator.data.energy_measures.get(
-            self._module.id
-        ).gas_water.value
+        measurement = self.coordinator.data.gas_water_measurements.get(
+            self._device.id
+        )
 
-        return str(measures[measures.__len__() - 1])
+        if measurement:
+            if len(measurement.value) > 0:
+                return measurement.value[-1]
 
-    @property
-    def extra_state_attributes(self):
-        return {
-            "historical_values": str(
-                self.coordinator.data.energy_measures.get(
-                    self._module.id
-                ).gas_water.value
-            )
-        }
+        return 0
 
     @property
     def native_unit_of_measurement(self) -> str:
@@ -223,20 +198,20 @@ class VaillantGasWaterSensor(VaillantEntity, SensorEntity):
         return ENERGY_WATT_HOUR
 
 
-class VaillantElecHeatingSensor(VaillantEntity, SensorEntity):
+class VaillantElecHeatingSensor(VaillantDeviceEntity, SensorEntity):
     """Vaillant vSMART Sensor."""
 
     @property
     def unique_id(self) -> str:
         """Return a unique ID to use for this entity."""
 
-        return f"{self._module.id}_elec_heating"
+        return f"{self._device.id}_elec_heating"
 
     @property
-    def name(self) -> str:
-        """Return the name of the sensor."""
+    def translation_key(self) -> str:
+        """Return the translation key of the sensor."""
 
-        return f"{self._module.module_name} Elec heating"
+        return "elec_heating"
 
     @property
     def entity_category(self) -> EntityCategory:
@@ -251,33 +226,21 @@ class VaillantElecHeatingSensor(VaillantEntity, SensorEntity):
         return SensorDeviceClass.ENERGY
 
     @property
-    def icon(self) -> str | None:
-        return "mdi:heating-coil"
-
-    @property
     def state_class(self) -> SensorStateClass:
         """Return state class for this sensor."""
 
         return SensorStateClass.TOTAL_INCREASING
 
     @property
-    def native_value(self) -> str:
+    def native_value(self) -> float:
         """Return current value of gas water sensor."""
-        measures = self.coordinator.data.energy_measures.get(
-            self._module.id
-        ).elec_heating.value
+        measurement = self.coordinator.data.elec_heating_measurements.get(
+            self._device.id
+        )
 
-        return str(measures[measures.__len__() - 1])
-
-    @property
-    def extra_state_attributes(self):
-        return {
-            "historical_values": str(
-                self.coordinator.data.energy_measures.get(
-                    self._module.id
-                ).elec_heating.value
-            )
-        }
+        if measurement:
+            if len(measurement.value) > 0:
+                return measurement.value[-1]
 
     @property
     def native_unit_of_measurement(self) -> str:
@@ -286,20 +249,20 @@ class VaillantElecHeatingSensor(VaillantEntity, SensorEntity):
         return ENERGY_WATT_HOUR
 
 
-class VaillantElecWaterSensor(VaillantEntity, SensorEntity):
+class VaillantElecWaterSensor(VaillantDeviceEntity, SensorEntity):
     """Vaillant vSMART Sensor."""
 
     @property
     def unique_id(self) -> str:
         """Return a unique ID to use for this entity."""
 
-        return f"{self._module.id}_elec_water"
+        return f"{self._device.id}_elec_water"
 
     @property
-    def name(self) -> str:
-        """Return the name of the sensor."""
+    def translation_key(self) -> str:
+        """Return the translation key of the sensor."""
 
-        return f"{self._module.module_name} Elec water"
+        return "elec_water"
 
     @property
     def entity_category(self) -> EntityCategory:
@@ -314,33 +277,21 @@ class VaillantElecWaterSensor(VaillantEntity, SensorEntity):
         return SensorDeviceClass.ENERGY
 
     @property
-    def icon(self) -> str | None:
-        return "mdi:water-boiler"
-
-    @property
     def state_class(self) -> SensorStateClass:
         """Return state class for this sensor."""
 
         return SensorStateClass.TOTAL_INCREASING
 
     @property
-    def native_value(self) -> str:
+    def native_value(self) -> float:
         """Return current value of elec water sensor."""
-        measures = self.coordinator.data.energy_measures.get(
-            self._module.id
-        ).elec_water.value
+        measurement = self.coordinator.data.elec_water_measurements.get(
+            self._device.id
+        )
 
-        return str(measures[measures.__len__() - 1])
-
-    @property
-    def extra_state_attributes(self):
-        return {
-            "historical_values": str(
-                self.coordinator.data.energy_measures.get(
-                    self._module.id
-                ).elec_water.value
-            )
-        }
+        if measurement:
+            if len(measurement.value) > 0:
+                return measurement.value[-1]
 
     @property
     def native_unit_of_measurement(self) -> str:

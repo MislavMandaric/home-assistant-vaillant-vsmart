@@ -41,8 +41,8 @@ async def async_setup_entry(
     coordinator: VaillantCoordinator = hass.data[DOMAIN][entry.entry_id]
 
     new_devices = [
-        VaillantWaterHeater(coordinator, device.id)
-        for device in coordinator.data.devices.values()
+        VaillantWaterHeater(coordinator, device_id)
+        for device_id in coordinator.data.devices.keys()
     ]
     async_add_devices(new_devices)
 

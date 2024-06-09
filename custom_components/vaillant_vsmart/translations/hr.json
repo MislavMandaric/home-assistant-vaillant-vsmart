@@ -36,6 +36,11 @@
         }
     },
     "entity": {
+        "sensor": {
+            "gas_heating": {
+                "name": "Gas heating"
+            }
+        },
         "water_heater": {
             "vaillant": {
                 "state": {

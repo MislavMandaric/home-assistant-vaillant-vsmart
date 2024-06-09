@@ -30,70 +30,30 @@ UPDATE_INTERVAL = timedelta(minutes=5)
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
-class EnergyMeasures:
-    """Class to represent energy measures."""
-
-    def __init__(
-        self,
-        gas_heating: MeasurementItem,
-        gas_water: MeasurementItem,
-        elec_heating: MeasurementItem,
-        elec_water: MeasurementItem,
-    ) -> None:
-        """Initialize."""
-        self._gas_heating = gas_heating
-        self._gas_water = gas_water
-        self._elec_heating = elec_heating
-        self._elec_water = elec_water
-
-    @property
-    def gas_heating(self) -> MeasurementItem:
-        """Retrun value of gas_heating measurement"""
-
-        return self._gas_heating
-
-    @property
-    def gas_water(self) -> MeasurementItem:
-        """Retrun value of gas_water measurement"""
-
-        return self._gas_water
-
-    @property
-    def elec_heating(self) -> MeasurementItem:
-        """Retrun value of gas_heating measurement"""
-
-        return self._elec_heating
-
-    @property
-    def elec_water(self) -> MeasurementItem:
-        """Retrun value of gas_water measurement"""
-
-        return self._elec_water
-
-
 class VaillantData:
     """Class holding data which coordinator provides to the entity."""
 
     def __init__(
         self,
         client: ThermostatClient,
-        devices: list[Device],
-        energy_measures: dict[str, EnergyMeasures],
+        devices: dict[str, Device],
+        modules: dict[tuple[str, str], Module],
+        programs: dict[tuple[str, str, str], Program],
+        gas_heating_measurements: dict[str, MeasurementItem],
+        gas_water_measurements: dict[str, MeasurementItem],
+        elec_heating_measurements: dict[str, MeasurementItem],
+        elec_water_measurements: dict[str, MeasurementItem],
     ) -> None:
         """Initialize."""
 
         self.client = client
-        self.devices = {device.id: device for device in devices}
-        self.modules = {
-            module.id: module for device in devices for module in device.modules
-        }
-        self.programs = {
-            program.id: program
-            for device in devices
-            for module in device.modules
-            for program in module.therm_program_list
-        }
-        self.energy_measures = energy_measures
+        self.devices = devices
+        self.modules = modules
+        self.programs = programs
+        self.gas_heating_measurements = gas_heating_measurements
+        self.gas_water_measurements = gas_water_measurements
+        self.elec_heating_measurements = elec_heating_measurements
+        self.elec_water_measurements = elec_water_measurements
 
 
 class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
@@ -120,51 +80,68 @@ class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
         """
 
         try:
-            devices = await self._client.async_get_thermostats_data()
-            measured_energy = await self.get_all_measurements(devices)
+            devices = await self._get_devices()
+            modules = await self._get_modules(devices.values())
+            programs = await self._get_programs(devices.values())
+            gas_heating_measurements = await self._get_measurements(devices.values(), MeasurementType.SUM_ENERGY_GAS_HEATING)
+            gas_water_measurements = await self._get_measurements(devices.values(), MeasurementType.SUM_ENERGY_GAS_WATER)
+            elec_heating_measurements = await self._get_measurements(devices.values(), MeasurementType.SUM_ENERGY_ELEC_HEATING)
+            elec_water_measurements = await self._get_measurements(devices.values(), MeasurementType.SUM_ENERGY_ELEC_WATER)
 
-            return VaillantData(self._client, devices, measured_energy)
+            print(programs)
+
+            return VaillantData(
+                self._client,
+                devices,
+                modules,
+                programs,
+                gas_heating_measurements,
+                gas_water_measurements,
+                elec_heating_measurements,
+                elec_water_measurements,
+            )
         except RequestUnauthorizedException as ex:
             raise ConfigEntryAuthFailed from ex
         except ApiException as ex:
             _LOGGER.exception(ex)
             raise UpdateFailed(f"Error communicating with API: {ex}") from ex
 
-    async def get_all_measurements(self, devices: list[Device]) -> MeasurementItem:
-        """Returns all measurements for devices"""
+    async def _get_devices(self) -> dict[str, Device]:
+        devices = await self._client.async_get_thermostats_data()
         return {
-            module.id: EnergyMeasures(heating, water, elec_heating, elec_water)
+            device.id: device
             for device in devices
-            for module in device.modules
-            for heating in await self._client.async_get_measure(
-                device.id,
-                module.id,
-                MeasurementType.SUM_ENERGY_GAS_HEATING,
-                MeasurementScale.DAY,
-                datetime.now() - timedelta(days=7),
-            )
-            for water in await self._client.async_get_measure(
-                device.id,
-                module.id,
-                MeasurementType.SUM_ENERGY_GAS_WATER,
-                MeasurementScale.DAY,
-                datetime.now() - timedelta(days=7),
-            )
-            for elec_heating in await self._client.async_get_measure(
-                device.id,
-                module.id,
-                MeasurementType.SUM_ENERGY_ELEC_HEATING,
-                MeasurementScale.DAY,
-                datetime.now() - timedelta(days=7),
-            )
-            for elec_water in await self._client.async_get_measure(
-                device.id,
-                module.id,
-                MeasurementType.SUM_ENERGY_ELEC_WATER,
-                MeasurementScale.DAY,
-                datetime.now() - timedelta(days=7),
-            )
         }
+
+    async def _get_modules(self, devices: list[Device]) -> dict[tuple[str, str], Module]:
+        return {
+            (device.id, module.id): module
+            for device in devices for module in device.modules
+        }
+
+    async def _get_programs(self, devices: list[Device]) -> dict[tuple[str, str, str], Program]:
+        return {
+            (device.id, module.id, program.id): program
+            for device in devices for module in device.modules for program in module.therm_program_list
+        }
+
+    async def _get_measurements(self, devices: list[Device], type: MeasurementType) -> dict[str, MeasurementItem]:
+        return {
+            device.id: await self._get_measurement(device.id, device.modules[0].id, type)
+            for device in devices
+        }
+
+    async def _get_measurement(self, device_id: str, module_id: str, type: MeasurementType) -> MeasurementItem:
+        measurements = await self._client.async_get_measure(
+                device_id,
+                module_id,
+                type,
+                MeasurementScale.DAY,
+                datetime.now() - timedelta(days=7),
+            )
+        if len(measurements) > 0:
+            return measurements[-1]
+        return None
 
 
 class VaillantDeviceEntity(CoordinatorEntity[VaillantData]):
@@ -249,7 +226,7 @@ class VaillantModuleEntity(CoordinatorEntity[VaillantData]):
     def _module(self) -> Module:
         """Return the module which this entity represents."""
 
-        return self.coordinator.data.modules[self._module_id]
+        return self.coordinator.data.modules[(self._device_id, self._module_id)]
 
     @property
     def unique_id(self) -> str:
@@ -310,13 +287,13 @@ class VaillantProgramEntity(CoordinatorEntity[VaillantData]):
     def _module(self) -> Module:
         """Return the module which this entity represents."""
 
-        return self.coordinator.data.modules[self._module_id]
+        return self.coordinator.data.modules[(self._device_id, self._module_id)]
 
     @property
     def _program(self) -> Program:
         """Return the program which this entity represents."""
 
-        return self.coordinator.data.programs[self._program_id]
+        return self.coordinator.data.programs[(self._device_id, self._module_id, self._program_id)]
 
     @property
     def unique_id(self) -> str:
