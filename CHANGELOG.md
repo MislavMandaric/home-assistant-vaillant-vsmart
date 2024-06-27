@@ -1,3 +1,10 @@
+## [0.9.1-dev.1](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/compare/v0.9.0...v0.9.1-dev.1) (2024-06-27)
+
+
+### Bug Fixes
+
+* homeassistant.components deprecations ([#336](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/issues/336)) ([0baa2a3](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/0baa2a3cda8382092f4cd6e8385ed7a6e48eb8de))
+
 # CHANGELOG
 
 
