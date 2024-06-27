@@ -8,6 +8,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.components.websocket_api import (
     decorators,
     ActiveConnection,
+    async_register_command,
 )
 
 
@@ -113,9 +114,10 @@ async def websocket_get_tags(
 async def async_register_websockets(hass: HomeAssistant) -> None:
     """TODO."""
 
-    hass.components.websocket_api.async_register_command(websocket_get_schedules)
-    hass.components.websocket_api.async_register_command(websocket_get_schedule_item)
-    hass.components.websocket_api.async_register_command(
+    async_register_command(hass, websocket_get_schedules)
+    async_register_command(hass, websocket_get_schedule_item)
+    async_register_command(
+        hass,
         websocket_schedule_item_updated
     )
-    hass.components.websocket_api.async_register_command(websocket_get_tags)
+    async_register_command(hass, websocket_get_tags)

@@ -1,12 +1,16 @@
 version: 2
 
 updates:
-  - package-ecosystem: github-actions
+  - package-ecosystem: "pip"
     directory: "/"
     schedule:
-      interval: daily
+      interval: "daily"
+    commit-message:
+      prefix: "fix"
 
-  - package-ecosystem: pip
+  - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: daily
+      interval: "daily"
+    commit-message:
+      prefix: "fix"
