@@ -1,3 +1,10 @@
+# [0.10.0-dev.3](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/compare/v0.10.0-dev.2...v0.10.0-dev.3) (2024-06-30)
+
+
+### Features
+
+* Separate hwb switch for boiler device ([#345](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/issues/345)) ([a867e16](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/a867e16fb98149b301d75c13b662839fb0410e60))
+
 # [0.10.0-dev.2](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/compare/v0.10.0-dev.1...v0.10.0-dev.2) (2024-06-30)
 
 
