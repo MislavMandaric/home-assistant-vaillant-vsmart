@@ -1,7 +1,6 @@
 """The Vaillant vSMART climate platform."""
 from __future__ import annotations
 
-import datetime
 import logging
 import math
 
@@ -13,7 +12,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import ATTR_TEMPERATURE, UnitOfTemperature
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from vaillant_netatmo_api import ApiException, SetpointMode, SystemMode
+from vaillant_netatmo_api import ApiException, SystemMode
 
 from .const import (
     DOMAIN,
