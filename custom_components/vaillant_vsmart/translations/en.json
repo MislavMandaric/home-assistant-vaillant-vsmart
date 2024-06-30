@@ -41,7 +41,7 @@
                 "name": "Outdoor temperature"
             },
             "sum_boiler_on": {
-                "name": "Boiler on duration"
+                "name": "Boiler daily usage"
             },
             "sum_energy_gaz_heating": {
                 "name": "Energy gas heating"

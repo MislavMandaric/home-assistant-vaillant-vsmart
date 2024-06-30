@@ -38,7 +38,7 @@
     "entity": {
         "sensor": {
             "sum_boiler_on": {
-                "name": "Durée de fonctionnement de la chaudière"
+                "name": "Utilisation quotidienne de la chaudière"
             },
             "sum_energy_gaz_heating": {
                 "name": "Consommation de gaz chauffage"
