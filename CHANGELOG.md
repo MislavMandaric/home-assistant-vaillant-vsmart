@@ -1,3 +1,10 @@
+# [0.10.0-dev.2](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/compare/v0.10.0-dev.1...v0.10.0-dev.2) (2024-06-30)
+
+
+### Features
+
+* Add new sensor for outdoor temperature ([#344](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/issues/344)) ([58f51b1](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/58f51b16249f1199554ff921af1a432fb9abfa18))
+
 # [0.10.0-dev.1](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/compare/v0.9.1-dev.1...v0.10.0-dev.1) (2024-06-30)
 
 
