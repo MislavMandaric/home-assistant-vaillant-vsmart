@@ -14,13 +14,13 @@
 
 **This component will set up the following platforms.**
 
-| Platform        | Description                                                   |
-| --------------- |---------------------------------------------------------------|
-| `climate`       | Management of Vaillant thermostat.                            |
-| `select`        | Selector showing currently selected schedule.                 |
-| `sensor`        | Battery sensor for the thermostat.<br/>Mesurement gas sensors |
-| `switch`        | On/off switch for schedules.                                  |
-| `water_heater`  | Management of Vaillant boiler.                                |
+| Platform        | Description                                                    |
+| --------------- | -------------------------------------------------------------- |
+| `climate`       | <li>Management of Vaillant thermostat                          |
+| `select`        | <li>Selector showing currently selected schedule               |
+| `sensor`        | <li>Battery sensor for the thermostat<li>Boiler energy sensors |
+| `switch`        | <li>On/off switch for schedules                                |
+| `water_heater`  | <li>Management of Vaillant boiler                              |
 
 ## Installation
 
