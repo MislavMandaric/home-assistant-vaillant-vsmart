@@ -56,11 +56,15 @@
                 "name": "Potrošnja struje za toplu vodu"
             }
         },
+        "switch": {
+            "hwb": {
+                "name": "Pojačano grijanje vode"
+            }
+        },
         "water_heater": {
             "vaillant": {
                 "state": {
                     "heating": "Grijanje",
-                    "hot_water_boost": "Pojačano grijanje vode",
                     "hot_water_only": "Samo topla voda",
                     "stand_by": "Stanje pripravnosti"
                 },
@@ -68,7 +72,6 @@
                     "operation_list": {
                         "state": {
                             "heating": "Grijanje",
-                            "hot_water_boost": "Pojačano grijanje vode",
                             "hot_water_only": "Samo topla voda",
                             "stand_by": "Stanje pripravnosti"
                         }
@@ -76,7 +79,6 @@
                     "operation_mode": {
                         "state": {
                             "heating": "Grijanje",
-                            "hot_water_boost": "Pojačano grijanje vode",
                             "hot_water_only": "Samo topla voda",
                             "stand_by": "Stanje pripravnosti"
                         }

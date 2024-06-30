@@ -53,11 +53,15 @@
                 "name": "Consommation électrique eau chaude"
             }
         },
+        "switch": {
+            "hwb": {
+                "name": "Boost eau chaude"
+            }
+        },
         "water_heater": {
             "vaillant": {
                 "state": {
                     "heating": "En chauffe",
-                    "hot_water_boost": "Boost eau chaude",
                     "hot_water_only": "Eau chaude uniquement",
                     "stand_by": "En veille"
                 },
@@ -65,7 +69,6 @@
                     "operation_list": {
                         "state": {
                             "heating": "En chauffe",
-                            "hot_water_boost": "Boost eau chaude",
                             "hot_water_only": "Eau chaude uniquement",
                             "stand_by": "En veille"
                         }
@@ -73,7 +76,6 @@
                     "operation_mode": {
                         "state": {
                             "heating": "En veille",
-                            "hot_water_boost": "Boost eau chaudet",
                             "hot_water_only": "Eau chaude uniquement",
                             "stand_by": "En veille"
                         }

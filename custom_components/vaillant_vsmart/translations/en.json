@@ -56,11 +56,15 @@
                 "name": "Energy electric hot water"
             }
         },
+        "switch": {
+            "hwb": {
+                "name": "Hot water boost"
+            }
+        },
         "water_heater": {
             "vaillant": {
                 "state": {
                     "heating": "Heating",
-                    "hot_water_boost": "Hot water boost",
                     "hot_water_only": "Hot water only",
                     "stand_by": "Standby"
                 },
@@ -68,7 +72,6 @@
                     "operation_list": {
                         "state": {
                             "heating": "Heating",
-                            "hot_water_boost": "Hot water boost",
                             "hot_water_only": "Hot water only",
                             "stand_by": "Standby"
                         }
@@ -76,7 +79,6 @@
                     "operation_mode": {
                         "state": {
                             "heating": "Heating",
-                            "hot_water_boost": "Hot water boost",
                             "hot_water_only": "Hot water only",
                             "stand_by": "Standby"
                         }
