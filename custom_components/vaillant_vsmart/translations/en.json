@@ -37,6 +37,9 @@
     },
     "entity": {
         "sensor": {
+            "outdoor_temperature": {
+                "name": "Outdoor temperature"
+            },
             "sum_boiler_on": {
                 "name": "Boiler on duration"
             },

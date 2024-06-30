@@ -9,13 +9,13 @@ from homeassistant.components.sensor import (
     SensorStateClass,
 )
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import PERCENTAGE, UnitOfEnergy, UnitOfTime
+from homeassistant.const import PERCENTAGE, UnitOfEnergy, UnitOfTime, UnitOfTemperature
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN, SUPPORTED_ENERGY_MEASUREMENT_TYPES, SUPPORTED_DURATION_MEASUREMENT_TYPES
-from .entity import VaillantCoordinator, VaillantModuleEntity, VaillantMeasurementEntity
+from .entity import VaillantCoordinator, VaillantDeviceEntity, VaillantModuleEntity, VaillantMeasurementEntity
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -28,6 +28,9 @@ async def async_setup_entry(
     coordinator: VaillantCoordinator = hass.data[DOMAIN][entry.entry_id]
 
     new_devices = [
+        VaillantTemperatureSensor(coordinator, device.id)
+        for device in coordinator.data.devices.values()
+    ] + [
         VaillantBatterySensor(coordinator, device.id, module.id)
         for device in coordinator.data.devices.values()
         for module in device.modules
@@ -46,6 +49,46 @@ async def async_setup_entry(
     ]
 
     async_add_devices(new_devices)
+
+
+class VaillantTemperatureSensor(VaillantDeviceEntity, SensorEntity):
+    """Vaillant vSMART Sensor."""
+
+    @property
+    def translation_key(self):
+        """Return the translation key to translate the entity's name and states."""
+
+        return "outdoor_temperature"
+
+    @property
+    def entity_category(self) -> EntityCategory:
+        """Return entity category for this sensor."""
+
+        return EntityCategory.DIAGNOSTIC
+
+    @property
+    def device_class(self) -> SensorDeviceClass:
+        """Return device class for this sensor."""
+
+        return SensorDeviceClass.TEMPERATURE
+
+    @property
+    def state_class(self) -> SensorStateClass:
+        """Return state class for this sensor."""
+
+        return SensorStateClass.MEASUREMENT
+
+    @property
+    def native_value(self) -> float:
+        """Return current value of temperature level."""
+
+        return self._device.outdoor_temperature.te
+
+    @property
+    def native_unit_of_measurement(self) -> str:
+        """Return unit of measurement for the temperature level."""
+
+        return UnitOfTemperature.CELSIUS
 
 
 class VaillantBatterySensor(VaillantModuleEntity, SensorEntity):

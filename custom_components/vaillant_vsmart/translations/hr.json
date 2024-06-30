@@ -37,6 +37,9 @@
     },
     "entity": {
         "sensor": {
+            "outdoor_temperature": {
+                "name": "Vanjska temperatura"
+            },
             "sum_boiler_on": {
                 "name": "Vrijeme rada bojlera"
             },
