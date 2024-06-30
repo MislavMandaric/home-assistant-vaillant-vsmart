@@ -1,3 +1,10 @@
+# [0.10.0-dev.1](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/compare/v0.9.1-dev.1...v0.10.0-dev.1) (2024-06-30)
+
+
+### Features
+
+* Improve energy consumption implementation with additional sensor for duration of boiler being on ([#343](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/issues/343)) ([a581a77](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/a581a77c824894b8f72f9edff55dcc0e3dfac3cf))
+
 ## [0.9.1-dev.1](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/compare/v0.9.0...v0.9.1-dev.1) (2024-06-27)
 
 
