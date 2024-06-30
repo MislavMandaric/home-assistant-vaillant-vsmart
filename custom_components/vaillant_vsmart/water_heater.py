@@ -1,7 +1,6 @@
 """The Vaillant vSMART climate platform."""
 from __future__ import annotations
 
-import datetime
 import logging
 import math
 
@@ -13,7 +12,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import ATTR_TEMPERATURE, UnitOfTemperature
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from vaillant_netatmo_api import ApiException, SetpointMode, SystemMode
+from vaillant_netatmo_api import ApiException, SystemMode
 
 from .const import (
     DOMAIN,
@@ -23,14 +22,14 @@ from .entity import VaillantCoordinator, VaillantDeviceEntity
 _LOGGER = logging.getLogger(__name__)
 
 OPERATION_HEATING = "heating"
-OPERATION_HOT_WATER_BOOST = "hot_water_boost"
 OPERATION_HOT_WATER_ONLY = "hot_water_only"
 OPERATION_STAND_BY = "stand_by"
 
 SUPPORTED_FEATURES = (
     WaterHeaterEntityFeature.TARGET_TEMPERATURE | WaterHeaterEntityFeature.OPERATION_MODE
 )
-SUPPORTED_WATER_HEATER_MODES = [OPERATION_HEATING, OPERATION_HOT_WATER_BOOST, OPERATION_HOT_WATER_ONLY, OPERATION_STAND_BY]
+SUPPORTED_WATER_HEATER_MODES = [OPERATION_HEATING,
+                                OPERATION_HOT_WATER_ONLY, OPERATION_STAND_BY]
 
 
 async def async_setup_entry(
@@ -107,57 +106,32 @@ class VaillantWaterHeater(VaillantDeviceEntity, WaterHeaterEntity):
     @property
     def current_operation(self) -> str:
         """Return currently selected operation mode."""
-        if self._device.setpoint_hwb.setpoint_activate:
-            return OPERATION_HOT_WATER_BOOST
 
         if self._device.system_mode == SystemMode.FROSTGUARD:
             return OPERATION_STAND_BY
-
-        if self._device.system_mode == SystemMode.SUMMER:
+        elif self._device.system_mode == SystemMode.SUMMER:
             return OPERATION_HOT_WATER_ONLY
-
-        return OPERATION_HEATING
+        else:
+            return OPERATION_HEATING
 
     async def async_set_operation_mode(self, operation_mode: str) -> None:
         """Select new operation mode."""
 
-        _LOGGER.debug("Setting water heater operation mode to: %s", operation_mode)
+        _LOGGER.debug(
+            "Setting water heater operation mode to: %s", operation_mode)
 
-        if operation_mode == OPERATION_HOT_WATER_BOOST:
-            endtime = datetime.datetime.now() + datetime.timedelta(
-                minutes=self._device.setpoint_default_duration
+        try:
+            system_mode = SystemMode.FROSTGUARD if operation_mode == OPERATION_STAND_BY else \
+                SystemMode.SUMMER if operation_mode == OPERATION_HOT_WATER_ONLY else \
+                SystemMode.WINTER
+
+            await self._client.async_set_system_mode(
+                self._device_id,
+                self._device.modules[0].id,
+                system_mode,
             )
-
-            try:
-                await self._client.async_set_minor_mode(
-                    self._device_id,
-                    self._device.modules[0].id,
-                    SetpointMode.HWB,
-                    True,
-                    setpoint_endtime=endtime,
-                )
-            except ApiException as ex:
-                _LOGGER.exception(ex)
-        else:
-            try:
-                await self._client.async_set_minor_mode(
-                    self._device_id,
-                    self._device.modules[0].id,
-                    SetpointMode.HWB,
-                    False,
-                )
-
-                system_mode = SystemMode.FROSTGUARD if operation_mode == OPERATION_STAND_BY else \
-                    SystemMode.SUMMER if operation_mode == OPERATION_HOT_WATER_ONLY else \
-                    SystemMode.WINTER
-
-                await self._client.async_set_system_mode(
-                    self._device_id,
-                    self._device.modules[0].id,
-                    system_mode,
-                )
-            except ApiException as ex:
-                _LOGGER.exception(ex)
+        except ApiException as ex:
+            _LOGGER.exception(ex)
 
         await self.coordinator.async_request_refresh()
 

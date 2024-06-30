@@ -1,7 +1,7 @@
 """The Vaillant vSMART climate platform."""
 from __future__ import annotations
 
-import datetime
+from datetime import datetime, timedelta
 import logging
 
 from homeassistant.components.climate import ClimateEntity
@@ -134,7 +134,7 @@ class VaillantClimate(VaillantModuleEntity, ClimateEntity):
         _LOGGER.debug("Setting HVAC mode to: %s", hvac_mode)
 
         if hvac_mode == HVACMode.HEAT:
-            endtime = datetime.datetime.now() + datetime.timedelta(
+            endtime = datetime.now() + timedelta(
                 minutes=self._device.setpoint_default_duration
             )
             new_temperature = (
@@ -201,7 +201,7 @@ class VaillantClimate(VaillantModuleEntity, ClimateEntity):
 
         _LOGGER.debug("Setting target temperature to: %s", new_temperature)
 
-        endtime = datetime.datetime.now() + datetime.timedelta(
+        endtime = datetime.now() + timedelta(
             minutes=self._device.setpoint_default_duration
         )
 
