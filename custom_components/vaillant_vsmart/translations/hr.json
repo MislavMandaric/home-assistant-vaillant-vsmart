@@ -36,6 +36,23 @@
         }
     },
     "entity": {
+        "sensor": {
+            "sum_boiler_on": {
+                "name": "Vrijeme rada bojlera"
+            },
+            "sum_energy_gaz_heating": {
+                "name": "Potrošnja plina za grijanje"
+            },
+            "sum_energy_gaz_hot_water": {
+                "name": "Potrošnja plina za toplu vodu"
+            },
+            "sum_energy_elec_heating": {
+                "name": "Potrošnja struje za grijanje"
+            },
+            "sum_energy_elec_hot_water": {
+                "name": "Potrošnja struje za toplu vodu"
+            }
+        },
         "water_heater": {
             "vaillant": {
                 "state": {
