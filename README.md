@@ -19,7 +19,7 @@
 | `climate`       | <li>Management of Vaillant thermostat                          |
 | `select`        | <li>Selector showing currently selected schedule               |
 | `sensor`        | <li>Battery sensor for the thermostat<li>Boiler energy sensors |
-| `switch`        | <li>On/off switch for schedules                                |
+| `switch`        | <li>On/off switch for schedules<li>On/off switch for HWB       |
 | `water_heater`  | <li>Management of Vaillant boiler                              |
 
 ## Installation

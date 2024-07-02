@@ -9,6 +9,12 @@
 
 {% if installed %}
 
+## Breaking changes in v0.10.0
+
+Updating to v0.10.0 or later release, from v0.9.0, introduces new breaking change. Dedicated switch for hot water boost is reintroduced, as part of the water heater device, which removes HWB feature from the water heater itself.
+* `water_heater.{boiler_name}` now only has three operation modes - `heating`, `hot_water_only` or `stand_by`
+    * If the removed `hot_water_boost` operation mode was used in automations, solution is to change automations to use `switch.turn_on` or `switch.turn_off` targeting the new `switch.{boiler_name}_hot_water_boost` entity instead of `water_heater.set_operation_mode`
+
 ## Breaking changes in v0.9.0
 
 Updating to v0.9.0 or later release, from any release before v0.9.0, introduces some breaking changes. The list is the following:
@@ -37,7 +43,7 @@ These changes align the integration better with the newly redesigned releases of
 | `climate`       | <li>Management of Vaillant thermostat                          |
 | `select`        | <li>Selector showing currently selected schedule               |
 | `sensor`        | <li>Battery sensor for the thermostat<li>Boiler energy sensors |
-| `switch`        | <li>On/off switch for schedules                                |
+| `switch`        | <li>On/off switch for schedules<li>On/off switch for HWB       |
 | `water_heater`  | <li>Management of Vaillant boiler                              |
 
 {% if not installed %}
