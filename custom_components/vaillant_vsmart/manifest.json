@@ -15,5 +15,5 @@
   "requirements": [
     "vaillant-netatmo-api==0.11.0"
   ],
-  "version": "0.10.0-dev.3"
+  "version": "0.10.0"
 }
