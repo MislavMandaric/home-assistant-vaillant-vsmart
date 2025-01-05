@@ -1,3 +1,17 @@
+# [0.10.0](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/compare/v0.9.0...v0.10.0) (2024-07-02)
+
+
+### Bug Fixes
+
+* homeassistant.components deprecations ([#336](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/issues/336)) ([0baa2a3](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/0baa2a3cda8382092f4cd6e8385ed7a6e48eb8de))
+
+
+### Features
+
+* Add new sensor for outdoor temperature ([#344](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/issues/344)) ([58f51b1](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/58f51b16249f1199554ff921af1a432fb9abfa18))
+* Improve energy consumption implementation with additional sensor for duration of boiler being on ([#343](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/issues/343)) ([a581a77](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/a581a77c824894b8f72f9edff55dcc0e3dfac3cf))
+* Separate hwb switch for boiler device ([#345](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/issues/345)) ([a867e16](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/a867e16fb98149b301d75c13b662839fb0410e60))
+
 # [0.10.0-dev.3](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/compare/v0.10.0-dev.2...v0.10.0-dev.3) (2024-06-30)
 
 
