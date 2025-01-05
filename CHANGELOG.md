@@ -1,3 +1,15 @@
+# [0.11.0](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/compare/v0.10.0...v0.11.0) (2025-01-05)
+
+
+### Bug Fixes
+
+* Update docs ([e0b8061](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/e0b806184f44a0fb8297ad8464aedc9681241e4a))
+
+
+### Features
+
+* Default setpoint duration config ([#410](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/issues/410)) ([6d7858c](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/6d7858ca980d8349f12653cd4d1b1472d9dedab7))
+
 # [0.11.0-dev.1](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/compare/v0.10.0...v0.11.0-dev.1) (2025-01-05)
 
 
