@@ -17,6 +17,7 @@
 | Platform        | Description                                                    |
 | --------------- | -------------------------------------------------------------- |
 | `climate`       | <li>Management of Vaillant thermostat                          |
+| `number`        | <li>Configuration of default setpoint duration                 |
 | `select`        | <li>Selector showing currently selected schedule               |
 | `sensor`        | <li>Battery sensor for the thermostat<li>Boiler energy sensors |
 | `switch`        | <li>On/off switch for schedules<li>On/off switch for HWB       |
