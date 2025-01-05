@@ -36,6 +36,11 @@
         }
     },
     "entity": {
+        "number": {
+            "default_setpoint_duration": {
+                "name": "Default setpoint duration"
+            }
+        },
         "sensor": {
             "outdoor_temperature": {
                 "name": "Outdoor temperature"

@@ -36,6 +36,11 @@
         }
     },
     "entity": {
+        "number": {
+            "default_setpoint_duration": {
+                "name": "Pretpostavljeno zadano trajanje"
+            }
+        },
         "sensor": {
             "outdoor_temperature": {
                 "name": "Vanjska temperatura"
