@@ -1,0 +1,95 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "description": "Ha először telepíted fel ezt a bővítményt és szükséged lenne segítségre, akkor nézd meg a [közösségi oldalt](https://community.home-assistant.io/t/added-support-for-vaillant-thermostat-how-to-integrate-in-official-release/31858). Itt megtudhatod, hogy hogyan találhatod meg a Kliens azonosítót és a kulcsot.",
+                "data": {
+                    "client_id": "Kliens azonosító",
+                    "client_secret": "Kliens kulcs",
+                    "username": "Felhasználónév",
+                    "password": "Jelszó",
+                    "user_prefix": "Felhasználói előtag",
+                    "app_version": "App verzió"
+                }
+            },
+            "reauth": {
+                "description": "A bejelentkezési adatok elavultak, így újra kell hitelesíteni magad az API-val. Mivel a bejelentkezési adataidat sosem tároltuk, ezért újra meg kell adnod őket.",
+                "data": {
+                    "client_id": "Kliens azonosító",
+                    "client_secret": "Kliens kulcs",
+                    "username": "Felhasználónév",
+                    "password": "Jelszó",
+                    "user_prefix": "Felhasználói előtag",
+                    "app_version": "App verzió"
+                }
+            }
+        },
+        "error": {
+            "invalid_auth": "Érvénytelen azonosítás",
+            "cannot_connect": "Sikertelen csatlakozás",
+            "unknown": "Váratlan hiba"
+        },
+        "abort": {
+            "reauth_successful": "Az újrahitelesítés sikeres",
+            "already_in_progress": "A konfiguráció már folyamatban van",
+            "already_configured": "A fiók már konfigurálva van"
+        }
+    },
+    "entity": {
+        "number": {
+            "default_setpoint_duration": {
+                "name": "Alapértelmezett kézi időtartam"
+            }
+        },
+        "sensor": {
+            "outdoor_temperature": {
+                "name": "Kültéri hőmérséklet"
+            },
+            "sum_boiler_on": {
+                "name": "Napi bojlerhasználat"
+            },
+            "sum_energy_gaz_heating": {
+                "name": "Fűtés gázfogyasztása"
+            },
+            "sum_energy_gaz_hot_water": {
+                "name": "Melegvíz gázfogyasztása"
+            },
+            "sum_energy_elec_heating": {
+                "name": "Fűtés áramfogyasztása"
+            },
+            "sum_energy_elec_hot_water": {
+                "name": "Melegvíz áramfogyasztása"
+            }
+        },
+        "switch": {
+            "hwb": {
+                "name": "Melegvíz fokozás"
+            }
+        },
+        "water_heater": {
+            "vaillant": {
+                "state": {
+                    "heating": "Fűtés",
+                    "hot_water_only": "Csak melegvíz",
+                    "stand_by": "Készenlét (fagyásvédelem)"
+                },
+                "state_attributes": {
+                    "operation_list": {
+                        "state": {
+                            "heating": "Fűtés",
+                            "hot_water_only": "Csak melegvíz",
+                            "stand_by": "Készenlét (fagyásvédelem)"
+                        }
+                    },
+                    "operation_mode": {
+                        "state": {
+                            "heating": "Fűtés",
+                            "hot_water_only": "Csak melegvíz",
+                            "stand_by": "Készenlét (fagyásvédelem)"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
