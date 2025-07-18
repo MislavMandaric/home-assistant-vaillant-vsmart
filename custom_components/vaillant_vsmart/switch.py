@@ -16,6 +16,8 @@ from .entity import VaillantCoordinator, VaillantDeviceEntity, VaillantProgramEn
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
+_HOME_ID = ""
+_HWB_ID = ""
 
 async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_devices: AddEntitiesCallback
@@ -121,9 +123,9 @@ class VaillantHwbSwitch(VaillantDeviceEntity, SwitchEntity):
         )
 
         try:
-            await self._client.async_set_minor_mode(
-                self._device_id,
-                self._device.modules[0].id,
+            await self._client.async_set_state_module(
+                _HOME_ID,
+                _HWB_ID,
                 SetpointMode.HWB,
                 True,
                 setpoint_endtime=endtime,
@@ -137,9 +139,9 @@ class VaillantHwbSwitch(VaillantDeviceEntity, SwitchEntity):
         """Turn off the switch."""
 
         try:
-            await self._client.async_set_minor_mode(
-                self._device_id,
-                self._device.modules[0].id,
+            await self._client.async_set_state_module(
+                _HOME_ID,
+                _HWB_ID,
                 SetpointMode.HWB,
                 False,
             )
