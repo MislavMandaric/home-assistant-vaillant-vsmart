@@ -33,6 +33,8 @@ SUPPORTED_FEATURES = (
 SUPPORTED_HVAC_MODES = [HVACMode.AUTO, HVACMode.HEAT]
 SUPPORTED_PRESET_MODES = [PRESET_NONE, PRESET_AWAY]
 
+_HOME_ID = ""  # <-- Fill with your Home ID
+_ROOM_ID = ""  # <-- Fill with your Room ID
 
 async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_devices: AddEntitiesCallback
@@ -206,9 +208,9 @@ class VaillantClimate(VaillantModuleEntity, ClimateEntity):
         )
 
         try:
-            await self._client.async_set_minor_mode(
-                self._device_id,
-                self._module_id,
+            await self._client.async_set_state_room(
+                _HOME_ID,
+                _ROOM_ID,
                 SetpointMode.MANUAL,
                 True,
                 setpoint_endtime=endtime,
