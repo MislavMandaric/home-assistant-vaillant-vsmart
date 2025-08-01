@@ -12,6 +12,8 @@ from homeassistant.helpers.update_coordinator import (
 )
 from vaillant_netatmo_api import (
     ApiException,
+    Home,
+    Room,
     Device,
     Module,
     Program,
@@ -32,11 +34,15 @@ _LOGGER: logging.Logger = logging.getLogger(__package__)
 class VaillantData:
     """Class holding data which coordinator provides to the entity."""
 
-    def __init__(self, client: ThermostatClient, devices: list[Device],
+    def __init__(self, client: ThermostatClient, homes: list[Home], devices: list[Device],
                  measurements: dict[(str, str, MeasurementType), MeasurementItem]) -> None:
         """Initialize."""
 
         self.client = client
+        self.homes = {home.id: home for home in homes}
+        self.rooms = {
+            room.id: room for home in homes for room in home.rooms
+        }
         self.devices = {device.id: device for device in devices}
         self.modules = {
             module.id: module for device in devices for module in device.modules
@@ -74,6 +80,7 @@ class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
         """
 
         try:
+            homes = await self._client.async_get_homes_data()
             devices = await self._client.async_get_thermostats_data()
 
             date_begin = datetime.now() - timedelta(days=1)
@@ -84,7 +91,7 @@ class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
                 for measurement_type in SUPPORTED_ENERGY_MEASUREMENT_TYPES+SUPPORTED_DURATION_MEASUREMENT_TYPES
             }
 
-            return VaillantData(self._client, devices, measurements)
+            return VaillantData(self._client, homes, devices, measurements)
         except RequestUnauthorizedException as ex:
             raise ConfigEntryAuthFailed from ex
         except ApiException as ex:
@@ -111,6 +118,24 @@ class VaillantDeviceEntity(CoordinatorEntity[VaillantData]):
         """Retrun the instance of the client which enables HTTP communication with the API."""
 
         return self.coordinator.data.client
+
+    @property
+    def _home(self) -> Home:
+        """Return the device which this entity represents."""
+
+        # TODO: Remove this hack
+        # We assume there is only one home and one room
+        # This assumption will be removed when we switch entirely to using new APIs
+        return self.coordinator.data.homes[0]
+
+    @property
+    def _room(self) -> Room:
+        """Return the device which this entity represents."""
+
+        # TODO: Remove this hack
+        # We assume there is only one home and one room
+        # This assumption will be removed when we switch entirely to using new APIs
+        return self.coordinator.data.rooms[0]
 
     @property
     def _device(self) -> Device:
@@ -163,6 +188,24 @@ class VaillantModuleEntity(CoordinatorEntity[VaillantData]):
         """Retrun the instance of the client which enables HTTP communication with the API."""
 
         return self.coordinator.data.client
+
+    @property
+    def _home(self) -> Home:
+        """Return the device which this entity represents."""
+
+        # TODO: Remove this hack
+        # We assume there is only one home and one room
+        # This assumption will be removed when we switch entirely to using new APIs
+        return self.coordinator.data.homes[0]
+
+    @property
+    def _room(self) -> Room:
+        """Return the device which this entity represents."""
+
+        # TODO: Remove this hack
+        # We assume there is only one home and one room
+        # This assumption will be removed when we switch entirely to using new APIs
+        return self.coordinator.data.rooms[0]
 
     @property
     def _device(self) -> Device:
@@ -316,13 +359,13 @@ class VaillantMeasurementEntity(CoordinatorEntity[VaillantData]):
 
         return f"{self._module.id}_{self._measurement_type}"
 
-    @ property
+    @property
     def has_entity_name(self) -> bool:
         """Return if entity is using new entity naming conventions."""
 
         return True
 
-    @ property
+    @property
     def device_info(self) -> dict[str, Any]:
         """Return all device info available for this entity."""
 

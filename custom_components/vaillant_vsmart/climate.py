@@ -16,7 +16,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import ATTR_TEMPERATURE, UnitOfTemperature
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from vaillant_netatmo_api import ApiException, SetpointMode, SystemMode
+from vaillant_netatmo_api import ApiException, SystemMode, ThermSetpointMode, TemperatureControlMode, ThermMode
 
 from .const import (
     DOMAIN,
@@ -141,23 +141,21 @@ class VaillantClimate(VaillantModuleEntity, ClimateEntity):
                 self._module.measured.temperature + DEFAULT_TEMPERATURE_INCREASE
             )
             try:
-                await self._client.async_set_minor_mode(
-                    self._device_id,
-                    self._module_id,
-                    SetpointMode.MANUAL,
-                    True,
-                    setpoint_endtime=endtime,
-                    setpoint_temp=new_temperature,
+                await self._client.async_set_state_for_room(
+                    self._home.id,
+                    self._room.id,
+                    ThermSetpointMode.MANUAL,
+                    therm_setpoint_temperature=new_temperature,
+                    therm_setpoint_end_time=endtime,
                 )
             except ApiException as ex:
                 _LOGGER.exception(ex)
         elif hvac_mode == HVACMode.AUTO:
             try:
-                await self._client.async_set_minor_mode(
+                await self._client.async_set_state_for_room(
                     self._device_id,
                     self._module_id,
-                    SetpointMode.MANUAL,
-                    False,
+                    ThermSetpointMode.HOME,
                 )
             except ApiException as ex:
                 _LOGGER.exception(ex)
@@ -171,21 +169,19 @@ class VaillantClimate(VaillantModuleEntity, ClimateEntity):
 
         if preset_mode == PRESET_AWAY:
             try:
-                await self._client.async_set_minor_mode(
-                    self._device_id,
-                    self._module_id,
-                    SetpointMode.AWAY,
-                    True,
+                await self._client.async_set_home_data(
+                    self._home.id,
+                    TemperatureControlMode.HEATING,
+                    ThermMode.AWAY,
                 )
             except ApiException as ex:
                 _LOGGER.exception(ex)
         elif preset_mode == PRESET_NONE:
             try:
-                await self._client.async_set_minor_mode(
-                    self._device_id,
-                    self._module_id,
-                    SetpointMode.AWAY,
-                    False,
+                await self._client.async_set_home_data(
+                    self._home.id,
+                    TemperatureControlMode.HEATING,
+                    ThermMode.SCHEDULE,
                 )
             except ApiException as ex:
                 _LOGGER.exception(ex)
@@ -206,13 +202,12 @@ class VaillantClimate(VaillantModuleEntity, ClimateEntity):
         )
 
         try:
-            await self._client.async_set_minor_mode(
-                self._device_id,
-                self._module_id,
-                SetpointMode.MANUAL,
-                True,
-                setpoint_endtime=endtime,
-                setpoint_temp=new_temperature,
+            await self._client.async_set_state_for_room(
+                self._home.id,
+                self._room.id,
+                ThermSetpointMode.MANUAL,
+                therm_setpoint_temperature=new_temperature,
+                therm_setpoint_end_time=endtime,
             )
         except ApiException as ex:
             _LOGGER.exception(ex)
