@@ -352,10 +352,15 @@ class VaillantMeasurementEntity(CoordinatorEntity[VaillantData]):
         return self.coordinator.data.modules[self._module_id]
 
     @property
-    def _measurement(self) -> MeasurementItem:
+    def _measurement(self) -> MeasurementItem | None:
         """Return the measurement which this entity represents."""
 
-        return self.coordinator.data.measurements[(self._device_id, self._module_id, self._measurement_type)][-1]
+        m = self.coordinator.data.measurements[(
+            self._device_id, self._module_id, self._measurement_type)]
+        if len(m) > 0:
+            return m[-1]
+
+        return None
 
     @property
     def unique_id(self) -> str:
