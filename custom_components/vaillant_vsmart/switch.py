@@ -116,17 +116,11 @@ class VaillantHwbSwitch(VaillantDeviceEntity, SwitchEntity):
     async def async_turn_on(self, **kwargs):
         """Turn on the switch."""
 
-        endtime = datetime.now() + timedelta(
-            minutes=self._device.setpoint_default_duration
-        )
-
         try:
-            await self._client.async_set_minor_mode(
+            await self._client.async_set_state_for_module(
+                self._home.id,
                 self._device_id,
-                self._device.modules[0].id,
-                SetpointMode.HWB,
                 True,
-                setpoint_endtime=endtime,
             )
         except ApiException as ex:
             _LOGGER.exception(ex)
@@ -137,10 +131,9 @@ class VaillantHwbSwitch(VaillantDeviceEntity, SwitchEntity):
         """Turn off the switch."""
 
         try:
-            await self._client.async_set_minor_mode(
+            await self._client.async_set_state_for_module(
+                self._home.id,
                 self._device_id,
-                self._device.modules[0].id,
-                SetpointMode.HWB,
                 False,
             )
         except ApiException as ex:

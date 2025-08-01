@@ -12,7 +12,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import ATTR_TEMPERATURE, UnitOfTemperature
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from vaillant_netatmo_api import ApiException, SystemMode
+from vaillant_netatmo_api import ApiException, SystemMode, TemperatureControlMode, ThermMode
 
 from .const import (
     DOMAIN,
@@ -121,15 +121,23 @@ class VaillantWaterHeater(VaillantDeviceEntity, WaterHeaterEntity):
             "Setting water heater operation mode to: %s", operation_mode)
 
         try:
-            system_mode = SystemMode.FROSTGUARD if operation_mode == OPERATION_STAND_BY else \
-                SystemMode.SUMMER if operation_mode == OPERATION_HOT_WATER_ONLY else \
-                SystemMode.WINTER
-
-            await self._client.async_set_system_mode(
-                self._device_id,
-                self._device.modules[0].id,
-                system_mode,
-            )
+            if operation_mode == OPERATION_STAND_BY:
+                await self._client.async_set_home_data(
+                    self._home.id,
+                    TemperatureControlMode.HEATING,
+                    ThermMode.HG,
+                )
+            elif operation_mode == OPERATION_HOT_WATER_ONLY:
+                await self._client.async_set_home_data(
+                    self._home.id,
+                    TemperatureControlMode.COOLING,
+                )
+            elif operation_mode == OPERATION_HEATING:
+                await self._client.async_set_home_data(
+                    self._home.id,
+                    TemperatureControlMode.HEATING,
+                    ThermMode.SCHEDULE,
+                )
         except ApiException as ex:
             _LOGGER.exception(ex)
 
