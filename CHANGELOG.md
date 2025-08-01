@@ -1,3 +1,10 @@
+# [0.11.0-dev.3](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/compare/v0.11.0-dev.2...v0.11.0-dev.3) (2025-08-01)
+
+
+### Bug Fixes
+
+* Proper API usage for water heater ([b3e0111](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/b3e0111fb7c225df8b2bdb641f665eff69d9a402))
+
 # [0.11.0-dev.2](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/compare/v0.11.0-dev.1...v0.11.0-dev.2) (2025-08-01)
 
 
