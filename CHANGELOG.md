@@ -1,3 +1,12 @@
+## [0.11.1](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/compare/v0.11.0...v0.11.1) (2025-08-01)
+
+
+### Bug Fixes
+
+* Make measurements optional ([c4bdb7f](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/c4bdb7f3e3fed8251526ab5a0a7bf04705434cb7))
+* Proper API usage for water heater ([b3e0111](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/b3e0111fb7c225df8b2bdb641f665eff69d9a402))
+* Use new APIs for making changes ([#417](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/issues/417)) ([1d64033](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/1d640333b9dfbe5c9fa625d79fba683f4a085f61))
+
 # [0.11.0](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/compare/v0.10.0...v0.11.0) (2025-01-05)
 
 
