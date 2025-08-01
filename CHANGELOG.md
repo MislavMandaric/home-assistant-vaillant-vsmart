@@ -1,3 +1,10 @@
+# [0.11.0-dev.4](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/compare/v0.11.0-dev.3...v0.11.0-dev.4) (2025-08-01)
+
+
+### Bug Fixes
+
+* Make measurements optional ([c4bdb7f](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/c4bdb7f3e3fed8251526ab5a0a7bf04705434cb7))
+
 # [0.11.0-dev.3](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/compare/v0.11.0-dev.2...v0.11.0-dev.3) (2025-08-01)
 
 
