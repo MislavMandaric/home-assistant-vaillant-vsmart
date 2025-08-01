@@ -130,24 +130,13 @@ class VaillantWaterHeater(VaillantDeviceEntity, WaterHeaterEntity):
             elif operation_mode == OPERATION_HOT_WATER_ONLY:
                 await self._client.async_set_home_data(
                     self._home.id,
-                    TemperatureControlMode.HEATING,
-                    ThermMode.SCHEDULE,
-                )
-                await self._client.async_set_state_for_module(
-                    self._home.id,
-                    self._device_id,
-                    True,
+                    TemperatureControlMode.COOLING,
                 )
             elif operation_mode == OPERATION_HEATING:
                 await self._client.async_set_home_data(
                     self._home.id,
                     TemperatureControlMode.HEATING,
                     ThermMode.SCHEDULE,
-                )
-                await self._client.async_set_state_for_module(
-                    self._home.id,
-                    self._device_id,
-                    False,
                 )
         except ApiException as ex:
             _LOGGER.exception(ex)

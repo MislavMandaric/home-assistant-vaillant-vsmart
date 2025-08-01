@@ -126,7 +126,8 @@ class VaillantDeviceEntity(CoordinatorEntity[VaillantData]):
         # TODO: Remove this hack
         # We assume there is only one home and one room
         # This assumption will be removed when we switch entirely to using new APIs
-        return self.coordinator.data.homes[0]
+        for id in self.coordinator.data.homes:
+            return self.coordinator.data.homes[id]
 
     @property
     def _room(self) -> Room:
@@ -135,7 +136,8 @@ class VaillantDeviceEntity(CoordinatorEntity[VaillantData]):
         # TODO: Remove this hack
         # We assume there is only one home and one room
         # This assumption will be removed when we switch entirely to using new APIs
-        return self.coordinator.data.rooms[0]
+        for id in self.coordinator.data.rooms:
+            return self.coordinator.data.rooms[id]
 
     @property
     def _device(self) -> Device:
@@ -196,7 +198,8 @@ class VaillantModuleEntity(CoordinatorEntity[VaillantData]):
         # TODO: Remove this hack
         # We assume there is only one home and one room
         # This assumption will be removed when we switch entirely to using new APIs
-        return self.coordinator.data.homes[0]
+        for id in self.coordinator.data.homes:
+            return self.coordinator.data.homes[id]
 
     @property
     def _room(self) -> Room:
@@ -205,7 +208,8 @@ class VaillantModuleEntity(CoordinatorEntity[VaillantData]):
         # TODO: Remove this hack
         # We assume there is only one home and one room
         # This assumption will be removed when we switch entirely to using new APIs
-        return self.coordinator.data.rooms[0]
+        for id in self.coordinator.data.rooms:
+            return self.coordinator.data.rooms[id]
 
     @property
     def _device(self) -> Device:

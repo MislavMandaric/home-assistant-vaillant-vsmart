@@ -153,8 +153,8 @@ class VaillantClimate(VaillantModuleEntity, ClimateEntity):
         elif hvac_mode == HVACMode.AUTO:
             try:
                 await self._client.async_set_state_for_room(
-                    self._device_id,
-                    self._module_id,
+                    self._home.id,
+                    self._room.id,
                     ThermSetpointMode.HOME,
                 )
             except ApiException as ex:
