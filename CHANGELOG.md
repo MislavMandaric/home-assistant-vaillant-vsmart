@@ -1,3 +1,10 @@
+# [0.11.0-dev.2](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/compare/v0.11.0-dev.1...v0.11.0-dev.2) (2025-08-01)
+
+
+### Bug Fixes
+
+* Use new APIs for making changes ([#417](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/issues/417)) ([1d64033](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/1d640333b9dfbe5c9fa625d79fba683f4a085f61))
+
 # [0.11.0-dev.1](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/compare/v0.10.0...v0.11.0-dev.1) (2025-01-05)
 
 
