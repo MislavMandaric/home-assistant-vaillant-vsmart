@@ -53,7 +53,7 @@ class VaillantClimate(VaillantModuleEntity, ClimateEntity):
     """Vaillant vSMART Climate."""
 
     @property
-    def name(self) -> str:
+    def name(self) -> str|None:
         """Return the name of the climate."""
 
         return None
