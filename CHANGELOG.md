@@ -1,3 +1,10 @@
+## [0.11.2](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/compare/v0.11.1...v0.11.2) (2025-10-25)
+
+
+### Bug Fixes
+
+* update Config import to use ConfigType from helpers.typing ([#425](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/issues/425)) ([a2df89b](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/commit/a2df89bd5da89abc2bf50d96daa4fcd07c3931c2))
+
 ## [0.11.2-dev.1](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/compare/v0.11.1...v0.11.2-dev.1) (2025-10-25)
 
 
