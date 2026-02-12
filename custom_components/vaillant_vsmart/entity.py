@@ -4,7 +4,7 @@ import logging
 from typing import Any
 
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import ConfigEntryAuthFailed
+from homeassistant.exceptions import ConfigEntryAuthFailed, HomeAssistantError
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
     DataUpdateCoordinator,
@@ -29,6 +29,40 @@ from .const import DOMAIN, SUPPORTED_ENERGY_MEASUREMENT_TYPES, SUPPORTED_DURATIO
 UPDATE_INTERVAL = timedelta(minutes=5)
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
+
+
+def _format_homes(homes: dict[str, Home]) -> str:
+    return ", ".join(f"{home.id} ({home.name})" for home in homes.values())
+
+
+def _select_home(data: "VaillantData", selected_home_id: str | None) -> Home:
+    if selected_home_id:
+        configured = data.homes.get(selected_home_id)
+        if configured is not None:
+            return configured
+
+        raise HomeAssistantError(
+            f"Configured home_id '{selected_home_id}' was not found. "
+            f"Available homes: {_format_homes(data.homes)}"
+        )
+
+    if len(data.homes) == 1:
+        return next(iter(data.homes.values()))
+
+    if len(data.homes) == 0:
+        raise HomeAssistantError("No homes returned by the Vaillant API.")
+
+    raise HomeAssistantError(
+        "Multiple homes detected. Configure home_id in Vaillant vSMART options. "
+        f"Available homes: {_format_homes(data.homes)}"
+    )
+
+
+def _select_room(home: Home) -> Room:
+    rooms = home.rooms
+    if len(rooms) == 0:
+        raise HomeAssistantError(f"No rooms returned for home_id '{home.id}'.")
+    return rooms[0]
 
 
 class VaillantData:
@@ -59,7 +93,12 @@ class VaillantData:
 class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
     """Class to manage fetching data from the API."""
 
-    def __init__(self, hass: HomeAssistant, client: ThermostatClient) -> None:
+    def __init__(
+        self,
+        hass: HomeAssistant,
+        client: ThermostatClient,
+        selected_home_id: str | None = None,
+    ) -> None:
         """Initialize."""
 
         super().__init__(
@@ -71,6 +110,7 @@ class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
         )
 
         self._client = client
+        self.selected_home_id = selected_home_id
 
     async def _update_method(self):
         """Fetch data from API endpoint.
@@ -122,22 +162,17 @@ class VaillantDeviceEntity(CoordinatorEntity[VaillantData]):
     @property
     def _home(self) -> Home:
         """Return the device which this entity represents."""
-
-        # TODO: Remove this hack
-        # We assume there is only one home and one room
-        # This assumption will be removed when we switch entirely to using new APIs
-        for id in self.coordinator.data.homes:
-            return self.coordinator.data.homes[id]
+        home = _select_home(self.coordinator.data, self.coordinator.selected_home_id)
+        _LOGGER.debug("Selected home_id=%s (configured_home_id=%s)", home.id, self.coordinator.selected_home_id)
+        return home
 
     @property
     def _room(self) -> Room:
         """Return the device which this entity represents."""
-
-        # TODO: Remove this hack
-        # We assume there is only one home and one room
-        # This assumption will be removed when we switch entirely to using new APIs
-        for id in self.coordinator.data.rooms:
-            return self.coordinator.data.rooms[id]
+        home = self._home
+        room = _select_room(home)
+        _LOGGER.debug("Selected room_id=%s for home_id=%s", room.id, home.id)
+        return room
 
     @property
     def _device(self) -> Device:
@@ -194,22 +229,17 @@ class VaillantModuleEntity(CoordinatorEntity[VaillantData]):
     @property
     def _home(self) -> Home:
         """Return the device which this entity represents."""
-
-        # TODO: Remove this hack
-        # We assume there is only one home and one room
-        # This assumption will be removed when we switch entirely to using new APIs
-        for id in self.coordinator.data.homes:
-            return self.coordinator.data.homes[id]
+        home = _select_home(self.coordinator.data, self.coordinator.selected_home_id)
+        _LOGGER.debug("Selected home_id=%s (configured_home_id=%s)", home.id, self.coordinator.selected_home_id)
+        return home
 
     @property
     def _room(self) -> Room:
         """Return the device which this entity represents."""
-
-        # TODO: Remove this hack
-        # We assume there is only one home and one room
-        # This assumption will be removed when we switch entirely to using new APIs
-        for id in self.coordinator.data.rooms:
-            return self.coordinator.data.rooms[id]
+        home = self._home
+        room = _select_room(home)
+        _LOGGER.debug("Selected room_id=%s for home_id=%s", room.id, home.id)
+        return room
 
     @property
     def _device(self) -> Device:

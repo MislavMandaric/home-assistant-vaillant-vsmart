@@ -9,7 +9,8 @@
                     "username": "Username",
                     "password": "Password",
                     "user_prefix": "User prefix",
-                    "app_version": "App version"
+                    "app_version": "App version",
+                    "home_id": "Home ID (optional)"
                 }
             },
             "reauth": {
@@ -20,7 +21,18 @@
                     "username": "Username",
                     "password": "Password",
                     "user_prefix": "User prefix",
-                    "app_version": "App version"
+                    "app_version": "App version",
+                    "home_id": "Home ID (optional)"
+                }
+            }
+        },
+        "options": {
+            "step": {
+                "init": {
+                    "description": "Set optional target home ID when your account has multiple homes.",
+                    "data": {
+                        "home_id": "Home ID (optional)"
+                    }
                 }
             }
         },

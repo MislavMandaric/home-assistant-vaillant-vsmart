@@ -17,6 +17,7 @@ PLATFORMS = [CLIMATE, NUMBER, SELECT, SENSOR, SWITCH, WATER_HEATER]
 # Configuration and options
 CONF_APP_VERSION = "app_version"
 CONF_USER_PREFIX = "user_prefix"
+CONF_HOME_ID = "home_id"
 
 SUPPORTED_ENERGY_MEASUREMENT_TYPES = [MeasurementType.SUM_ENERGY_GAS_HEATING, MeasurementType.SUM_ENERGY_GAS_WATER,
                                       MeasurementType.SUM_ENERGY_ELEC_HEATING, MeasurementType.SUM_ENERGY_ELEC_WATER]

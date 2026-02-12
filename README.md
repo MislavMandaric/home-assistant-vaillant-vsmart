@@ -64,6 +64,20 @@ For MiGo
 - User prefix : sdbg
 - App version : 1.3.0.4
 
+### Optional `home_id` targeting
+
+If your Netatmo account returns multiple homes with the same name, writes to `syncapi/v1/setstate` can fail for one home and succeed for another.
+
+Use integration options to set:
+- `home_id` (recommended when multiple homes exist)
+
+If these values are not set:
+- one home: the integration keeps existing behavior
+- multiple homes: service calls fail with an actionable error listing available IDs
+
+You can discover IDs using the smoke test in the `vaillant-netatmo-api` repo:
+- `uv run python tools/smoke_home_selection.py`
+
 <!---->
 
 ## Contributions are welcome!

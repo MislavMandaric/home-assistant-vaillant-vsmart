@@ -24,6 +24,7 @@ import voluptuous as vol
 
 from .const import (
     CONF_APP_VERSION,
+    CONF_HOME_ID,
     CONF_USER_PREFIX,
     DOMAIN,
 )
@@ -35,6 +36,10 @@ class VaillantFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     """Config flow for vaillant_vsmart."""
 
     VERSION = 1
+
+    @staticmethod
+    def async_get_options_flow(config_entry):
+        return VaillantOptionsFlowHandler(config_entry)
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
@@ -115,6 +120,9 @@ class VaillantFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     vol.Required(
                         CONF_APP_VERSION, default=user_input.get(CONF_APP_VERSION)
                     ): str,
+                    vol.Optional(
+                        CONF_HOME_ID, default=user_input.get(CONF_HOME_ID, "")
+                    ): str,
                 }
             ),
             errors=errors,
@@ -133,6 +141,7 @@ class VaillantFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             CONF_CLIENT_SECRET: data.get(CONF_CLIENT_SECRET),
             CONF_USER_PREFIX: data.get(CONF_USER_PREFIX),
             CONF_APP_VERSION: data.get(CONF_APP_VERSION),
+            CONF_HOME_ID: data.get(CONF_HOME_ID, ""),
         }
 
     async def _get_config_storage_data(
@@ -159,10 +168,44 @@ class VaillantFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             user_input.get(CONF_APP_VERSION),
         )
 
-        return {
+        data = {
             CONF_CLIENT_ID: user_input.get(CONF_CLIENT_ID),
             CONF_CLIENT_SECRET: user_input.get(CONF_CLIENT_SECRET),
             CONF_USER_PREFIX: user_input.get(CONF_USER_PREFIX),
             CONF_APP_VERSION: user_input.get(CONF_APP_VERSION),
             CONF_TOKEN: token_store.token.serialize(),
         }
+        data.update(_extract_target_ids(user_input))
+        return data
+
+
+class VaillantOptionsFlowHandler(config_entries.OptionsFlow):
+    """Handle Vaillant vSMART options."""
+
+    def __init__(self, config_entry):
+        self._config_entry = config_entry
+
+    async def async_step_init(self, user_input: dict[str, Any] | None = None) -> FlowResult:
+        if user_input is not None:
+            return self.async_create_entry(title="", data=_extract_target_ids(user_input))
+
+        current_home_id = self._config_entry.options.get(
+            CONF_HOME_ID, self._config_entry.data.get(CONF_HOME_ID, "")
+        )
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema=vol.Schema(
+                {
+                    vol.Optional(CONF_HOME_ID, default=current_home_id): str,
+                }
+            ),
+        )
+
+
+def _extract_target_ids(user_input: dict[str, Any]) -> dict[str, str]:
+    data: dict[str, str] = {}
+    home_id = (user_input.get(CONF_HOME_ID) or "").strip()
+    if home_id:
+        data[CONF_HOME_ID] = home_id
+    return data
