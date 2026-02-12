@@ -18,6 +18,8 @@ from vaillant_netatmo_api import (
     ApiException,
     AuthClient,
     RequestClientException,
+    ThermostatClient,
+    Token,
     TokenStore,
 )
 import voluptuous as vol
@@ -193,14 +195,47 @@ class VaillantOptionsFlowHandler(config_entries.OptionsFlow):
             CONF_HOME_ID, self._config_entry.data.get(CONF_HOME_ID, "")
         )
 
+        home_options = await self._async_home_options(current_home_id)
+        if home_options:
+            selector: Any = vol.In(home_options)
+        else:
+            selector = str
+
         return self.async_show_form(
             step_id="init",
             data_schema=vol.Schema(
                 {
-                    vol.Optional(CONF_HOME_ID, default=current_home_id): str,
+                    vol.Optional(CONF_HOME_ID, default=current_home_id): selector,
                 }
             ),
         )
+
+    async def _async_home_options(self, current_home_id: str) -> dict[str, str]:
+        try:
+            client_id = self._config_entry.data.get(CONF_CLIENT_ID)
+            client_secret = self._config_entry.data.get(CONF_CLIENT_SECRET)
+            token = Token.deserialize(self._config_entry.data.get(CONF_TOKEN))
+            thermostat_client = ThermostatClient(
+                get_async_client(self.hass),
+                TokenStore(client_id, client_secret, token, None),
+            )
+            homes = await thermostat_client.async_get_homes_data()
+        except Exception as ex:  # pylint: disable=broad-except
+            _LOGGER.warning("Failed to load homes for home_id dropdown, using text input: %s", ex)
+            return {}
+
+        options = {"": "Auto (single-home fallback)"}
+        for home in homes:
+            if home.id is None:
+                continue
+            home_id = str(home.id)
+            home_name = (home.name or "").strip()
+            options[home_id] = f"{home_name} ({home_id})" if home_name else home_id
+
+        if current_home_id and current_home_id not in options:
+            options[current_home_id] = f"{current_home_id} (configured)"
+
+        return options
 
 
 def _extract_target_ids(user_input: dict[str, Any]) -> dict[str, str]:
