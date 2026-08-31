@@ -96,3 +96,4 @@ class VaillantDeviceNumber(VaillantDeviceEntity, NumberEntity):
             _LOGGER.exception(ex)
 
         await self.coordinator.async_request_refresh()
+        self.coordinator.async_schedule_write_refresh()

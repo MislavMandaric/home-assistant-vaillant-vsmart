@@ -137,9 +137,14 @@ class VaillantClimate(VaillantModuleEntity, ClimateEntity):
             endtime = datetime.now() + timedelta(
                 minutes=self._device.setpoint_default_duration
             )
-            new_temperature = (
-                self._module.measured.temperature + DEFAULT_TEMPERATURE_INCREASE
-            )
+            base_temperature = self._module.measured.temperature
+            if base_temperature is None:
+                _LOGGER.warning(
+                    "No room temperature reported for module %s, cannot derive a manual setpoint",
+                    self._module_id,
+                )
+                return
+            new_temperature = base_temperature + DEFAULT_TEMPERATURE_INCREASE
             try:
                 await self._client.async_set_state_for_room(
                     self._home.id,
@@ -161,6 +166,7 @@ class VaillantClimate(VaillantModuleEntity, ClimateEntity):
                 _LOGGER.exception(ex)
 
         await self.coordinator.async_request_refresh()
+        self.coordinator.async_schedule_write_refresh()
 
     async def async_set_preset_mode(self, preset_mode: str) -> None:
         """Select new HVAC preset mode."""
@@ -187,6 +193,7 @@ class VaillantClimate(VaillantModuleEntity, ClimateEntity):
                 _LOGGER.exception(ex)
 
         await self.coordinator.async_request_refresh()
+        self.coordinator.async_schedule_write_refresh()
 
     async def async_set_temperature(self, **kwargs) -> None:
         """Update target room temperature value."""
@@ -213,3 +220,4 @@ class VaillantClimate(VaillantModuleEntity, ClimateEntity):
             _LOGGER.exception(ex)
 
         await self.coordinator.async_request_refresh()
+        self.coordinator.async_schedule_write_refresh()
