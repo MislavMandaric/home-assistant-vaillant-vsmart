@@ -76,6 +76,7 @@ class VaillantScheduleSwitch(VaillantProgramEntity, SwitchEntity):
             _LOGGER.exception(ex)
 
         await self.coordinator.async_request_refresh()
+        self.coordinator.async_schedule_write_refresh()
 
     async def async_turn_off(self, **kwargs):
         """Turn off the switch."""
@@ -125,6 +126,7 @@ class VaillantHwbSwitch(VaillantDeviceEntity, SwitchEntity):
             _LOGGER.exception(ex)
 
         await self.coordinator.async_request_refresh()
+        self.coordinator.async_schedule_write_refresh()
 
     async def async_turn_off(self, **kwargs):
         """Turn off the switch."""
@@ -137,3 +139,6 @@ class VaillantHwbSwitch(VaillantDeviceEntity, SwitchEntity):
             )
         except ApiException as ex:
             _LOGGER.exception(ex)
+
+        await self.coordinator.async_request_refresh()
+        self.coordinator.async_schedule_write_refresh()
