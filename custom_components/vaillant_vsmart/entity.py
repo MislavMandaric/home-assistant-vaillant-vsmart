@@ -1,4 +1,5 @@
 """Vaillant vSMART entity classes."""
+import asyncio
 from datetime import timedelta, datetime
 import logging
 from typing import Any
@@ -27,6 +28,11 @@ from vaillant_netatmo_api import (
 from .const import DOMAIN, SUPPORTED_ENERGY_MEASUREMENT_TYPES, SUPPORTED_DURATION_MEASUREMENT_TYPES
 
 UPDATE_INTERVAL = timedelta(minutes=5)
+
+# Measurements are requested at DAY scale, so they cannot change more than once
+# per day. Fetching them on every state poll costs five extra requests each time
+# for no new data.
+MEASUREMENT_UPDATE_INTERVAL = timedelta(hours=1)
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -71,6 +77,29 @@ class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
         )
 
         self._client = client
+        self._measurements: dict = {}
+        self._measurements_fetched_at: datetime | None = None
+
+    async def _async_get_measurements(self, devices: list[Device]) -> dict:
+        """Fetch all measurements concurrently."""
+
+        date_begin = datetime.now() - timedelta(days=1)
+        keys = [
+            (device.id, module.id, measurement_type)
+            for device in devices
+            for module in device.modules
+            for measurement_type in SUPPORTED_ENERGY_MEASUREMENT_TYPES
+            + SUPPORTED_DURATION_MEASUREMENT_TYPES
+        ]
+        results = await asyncio.gather(
+            *(
+                self._client.async_get_measure(
+                    device_id, module_id, measurement_type, MeasurementScale.DAY, date_begin
+                )
+                for device_id, module_id, measurement_type in keys
+            )
+        )
+        return dict(zip(keys, results))
 
     async def _update_method(self):
         """Fetch data from API endpoint.
@@ -83,15 +112,15 @@ class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
             homes = await self._client.async_get_homes_data()
             devices = await self._client.async_get_thermostats_data()
 
-            date_begin = datetime.now() - timedelta(days=1)
-            measurements = {
-                (device.id, module.id, measurement_type): await self._client.async_get_measure(device.id, module.id, measurement_type, MeasurementScale.DAY, date_begin)
-                for device in devices
-                for module in device.modules
-                for measurement_type in SUPPORTED_ENERGY_MEASUREMENT_TYPES+SUPPORTED_DURATION_MEASUREMENT_TYPES
-            }
+            now = datetime.now()
+            if (
+                self._measurements_fetched_at is None
+                or now - self._measurements_fetched_at >= MEASUREMENT_UPDATE_INTERVAL
+            ):
+                self._measurements = await self._async_get_measurements(devices)
+                self._measurements_fetched_at = now
 
-            return VaillantData(self._client, homes, devices, measurements)
+            return VaillantData(self._client, homes, devices, self._measurements)
         except RequestUnauthorizedException as ex:
             raise ConfigEntryAuthFailed from ex
         except ApiException as ex:
