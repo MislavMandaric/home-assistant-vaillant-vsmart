@@ -3,8 +3,9 @@ from datetime import timedelta, datetime
 import logging
 from typing import Any
 
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryAuthFailed
+from homeassistant.helpers.event import async_call_later
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
     DataUpdateCoordinator,
@@ -27,6 +28,11 @@ from vaillant_netatmo_api import (
 from .const import DOMAIN, SUPPORTED_ENERGY_MEASUREMENT_TYPES, SUPPORTED_DURATION_MEASUREMENT_TYPES
 
 UPDATE_INTERVAL = timedelta(minutes=5)
+
+# The Netatmo backend does not expose a write through `getthermostatsdata`
+# straight away. Refreshing right after a write returns the pre-write state,
+# so entities snap back to their old value and the write looks like it failed.
+WRITE_PROPAGATION_DELAY = 12
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -97,6 +103,20 @@ class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
         except ApiException as ex:
             _LOGGER.exception(ex)
             raise UpdateFailed(f"Error communicating with API: {ex}") from ex
+
+    @callback
+    def async_schedule_write_refresh(self) -> None:
+        """Schedule a refresh once the backend had time to apply a write.
+
+        Entities call this in addition to the immediate refresh: the immediate
+        one keeps the UI responsive, this one corrects the state after the
+        backend has actually applied the change.
+        """
+
+        async def _refresh(_now) -> None:
+            await self.async_refresh()
+
+        async_call_later(self.hass, WRITE_PROPAGATION_DELAY, _refresh)
 
 
 class VaillantDeviceEntity(CoordinatorEntity[VaillantData]):
