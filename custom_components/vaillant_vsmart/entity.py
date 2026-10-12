@@ -24,6 +24,11 @@ from vaillant_netatmo_api import (
     MeasurementType,
 )
 
+from .boiler_errors import (
+    HOMESTATUS_PATH,
+    boiler_errors_from_status,
+    parse_module_status,
+)
 from .const import DOMAIN, SUPPORTED_ENERGY_MEASUREMENT_TYPES, SUPPORTED_DURATION_MEASUREMENT_TYPES
 
 UPDATE_INTERVAL = timedelta(minutes=5)
@@ -35,7 +40,8 @@ class VaillantData:
     """Class holding data which coordinator provides to the entity."""
 
     def __init__(self, client: ThermostatClient, homes: list[Home], devices: list[Device],
-                 measurements: dict[(str, str, MeasurementType), MeasurementItem]) -> None:
+                 measurements: dict[(str, str, MeasurementType), MeasurementItem],
+                 module_status: dict[str, dict[str, Any]] | None = None) -> None:
         """Initialize."""
 
         self.client = client
@@ -54,6 +60,11 @@ class VaillantData:
             for program in module.therm_program_list
         }
         self.measurements = measurements
+        # None means the homestatus endpoint could not be read
+        self.module_status = module_status
+        self.boiler_errors = (
+            None if module_status is None else boiler_errors_from_status(module_status)
+        )
 
 
 class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
@@ -91,12 +102,41 @@ class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
                 for measurement_type in SUPPORTED_ENERGY_MEASUREMENT_TYPES+SUPPORTED_DURATION_MEASUREMENT_TYPES
             }
 
-            return VaillantData(self._client, homes, devices, measurements)
+            module_status = await self._async_get_module_status(homes)
+
+            return VaillantData(self._client, homes, devices, measurements, module_status)
         except RequestUnauthorizedException as ex:
             raise ConfigEntryAuthFailed from ex
         except ApiException as ex:
             _LOGGER.exception(ex)
             raise UpdateFailed(f"Error communicating with API: {ex}") from ex
+
+
+    async def _async_get_module_status(self, homes: list[Home]) -> dict[str, dict[str, Any]] | None:
+        """Read the module status (boiler errors, dhw, ...) from api/homestatus.
+
+        Failures are logged but never break the update of the other entities.
+        """
+
+        status: dict[str, dict[str, Any]] = {}
+        try:
+            for home in homes:
+                # The library has no wrapper for this endpoint yet, so the
+                # authenticated low level request of the client is used.
+                body = await self._client._post(HOMESTATUS_PATH, json={"home_id": home.id})
+                if body.get("status") != "ok":
+                    _LOGGER.warning("Unexpected homestatus response: %s", body)
+                    return None
+                _LOGGER.debug("homestatus response for %s: %s", home.id, body)
+                status.update(parse_module_status(body))
+        except RequestUnauthorizedException:
+            raise
+        except Exception as ex:
+            # Never let the optional homestatus call break the whole integration
+            _LOGGER.warning("Could not read boiler errors from homestatus: %s", ex)
+            return None
+
+        return status
 
 
 class VaillantDeviceEntity(CoordinatorEntity[VaillantData]):
@@ -167,6 +207,16 @@ class VaillantDeviceEntity(CoordinatorEntity[VaillantData]):
             "sw_version": self._device.firmware,
             "manufacturer": self._device.type,
         }
+
+
+class VaillantHomestatusEntity(VaillantDeviceEntity):
+    """Base class for device entities based on api/homestatus."""
+
+    @property
+    def available(self) -> bool:
+        """Return False if the homestatus endpoint could not be read."""
+
+        return super().available and self.coordinator.data.module_status is not None
 
 
 class VaillantModuleEntity(CoordinatorEntity[VaillantData]):

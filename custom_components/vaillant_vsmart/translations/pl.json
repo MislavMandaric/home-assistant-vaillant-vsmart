@@ -65,6 +65,70 @@
                     }
                 }
             }
+        },
+        "binary_sensor": {
+            "boiler_error_water_pressure": {
+                "name": "Water pressure low"
+            },
+            "boiler_error_maintenance": {
+                "name": "Maintenance required"
+            },
+            "boiler_error_boiler_error_internal": {
+                "name": "Boiler error"
+            },
+            "boiler_error_boiler_not_responding": {
+                "name": "Boiler not responding"
+            },
+            "boiler_error_boiler_flame": {
+                "name": "Boiler flame error"
+            },
+            "boiler_error_air_pressure": {
+                "name": "Boiler air pressure error"
+            },
+            "boiler_error_boiler_temperature": {
+                "name": "Boiler temperature error"
+            },
+            "boiler_problem": {
+                "name": "Boiler problem"
+            },
+            "status_ebus_error": {
+                "name": "eBUS error"
+            },
+            "status_boiler_status": {
+                "name": "Boiler active"
+            },
+            "status_dhw_enabled": {
+                "name": "Hot water enabled"
+            },
+            "status_anticipating": {
+                "name": "Anticipating"
+            },
+            "status_dhw_always_on": {
+                "name": "Hot water always on"
+            },
+            "status_emf_avail": {
+                "name": "Energy data available"
+            }
+        },
+        "sensor": {
+            "status_dhw_setpoint_temperature": {
+                "name": "Hot water setpoint"
+            },
+            "status_dhw_temperature_min": {
+                "name": "Hot water minimum temperature"
+            },
+            "status_dhw_temperature_max": {
+                "name": "Hot water maximum temperature"
+            },
+            "status_dhw_control": {
+                "name": "Hot water control"
+            },
+            "status_rf_strength": {
+                "name": "RF strength"
+            },
+            "status_oem_serial": {
+                "name": "Boiler serial number"
+            }
         }
     }
 }
