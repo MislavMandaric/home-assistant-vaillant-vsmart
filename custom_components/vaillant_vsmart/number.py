@@ -95,4 +95,4 @@ class VaillantDeviceNumber(VaillantDeviceEntity, NumberEntity):
         except ApiException as ex:
             _LOGGER.exception(ex)
 
-        await self.coordinator.async_request_refresh()
+        await self.coordinator.async_refresh_after_change()

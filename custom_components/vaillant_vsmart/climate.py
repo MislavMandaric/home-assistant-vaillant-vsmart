@@ -160,7 +160,7 @@ class VaillantClimate(VaillantModuleEntity, ClimateEntity):
             except ApiException as ex:
                 _LOGGER.exception(ex)
 
-        await self.coordinator.async_request_refresh()
+        await self.coordinator.async_refresh_after_change()
 
     async def async_set_preset_mode(self, preset_mode: str) -> None:
         """Select new HVAC preset mode."""
@@ -186,7 +186,7 @@ class VaillantClimate(VaillantModuleEntity, ClimateEntity):
             except ApiException as ex:
                 _LOGGER.exception(ex)
 
-        await self.coordinator.async_request_refresh()
+        await self.coordinator.async_refresh_after_change()
 
     async def async_set_temperature(self, **kwargs) -> None:
         """Update target room temperature value."""
@@ -212,4 +212,4 @@ class VaillantClimate(VaillantModuleEntity, ClimateEntity):
         except ApiException as ex:
             _LOGGER.exception(ex)
 
-        await self.coordinator.async_request_refresh()
+        await self.coordinator.async_refresh_after_change()

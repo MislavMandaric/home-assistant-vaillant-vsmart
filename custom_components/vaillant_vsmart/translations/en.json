@@ -91,5 +91,15 @@
                 }
             }
         }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "description": "Refresh immediately after a change, then again after this delay to allow cloud data to catch up. Set to 0 to disable the follow-up refresh.",
+                "data": {
+                    "refresh_delay": "Follow-up refresh delay (seconds)"
+                }
+            }
+        }
     }
 }

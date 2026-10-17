@@ -2,8 +2,10 @@
 from datetime import timedelta, datetime
 import logging
 from typing import Any
+from collections.abc import Callable
 
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers.event import async_call_later
 from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
@@ -24,7 +26,7 @@ from vaillant_netatmo_api import (
     MeasurementType,
 )
 
-from .const import DOMAIN, SUPPORTED_ENERGY_MEASUREMENT_TYPES, SUPPORTED_DURATION_MEASUREMENT_TYPES
+from .const import DEFAULT_REFRESH_DELAY, DOMAIN, SUPPORTED_ENERGY_MEASUREMENT_TYPES, SUPPORTED_DURATION_MEASUREMENT_TYPES
 
 UPDATE_INTERVAL = timedelta(minutes=5)
 
@@ -59,7 +61,7 @@ class VaillantData:
 class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
     """Class to manage fetching data from the API."""
 
-    def __init__(self, hass: HomeAssistant, client: ThermostatClient) -> None:
+    def __init__(self, hass: HomeAssistant, client: ThermostatClient, refresh_delay: int = DEFAULT_REFRESH_DELAY) -> None:
         """Initialize."""
 
         super().__init__(
@@ -71,6 +73,38 @@ class VaillantCoordinator(DataUpdateCoordinator[VaillantData]):
         )
 
         self._client = client
+        self.refresh_delay = refresh_delay
+        self._refresh_stopped = False
+        self._cancel_refresh: Callable[[], None] | None = None
+
+    @callback
+    def async_cancel_follow_up_refresh(self) -> None:
+        """Cancel a pending refresh after a command."""
+        if self._cancel_refresh is not None:
+            self._cancel_refresh()
+            self._cancel_refresh = None
+
+    @callback
+    def async_stop_follow_up_refresh(self) -> None:
+        """Cancel the timer and prevent in-flight actions rescheduling on unload."""
+        self._refresh_stopped = True
+        self.async_cancel_follow_up_refresh()
+
+    async def async_refresh_after_change(self) -> None:
+        """Refresh now and once more after the cloud propagation delay."""
+        self.async_cancel_follow_up_refresh()
+        await self.async_request_refresh()
+        # Another command may have scheduled a refresh while this one awaited I/O.
+        self.async_cancel_follow_up_refresh()
+        if self.refresh_delay > 0 and not self._refresh_stopped:
+            self._cancel_refresh = async_call_later(
+                self.hass, self.refresh_delay, self._async_follow_up_refresh
+            )
+
+    async def _async_follow_up_refresh(self, _now: datetime) -> None:
+        """Fetch cloud data again after a change has had time to propagate."""
+        self._cancel_refresh = None
+        await self.async_request_refresh()
 
     async def _update_method(self):
         """Fetch data from API endpoint.
@@ -164,7 +198,7 @@ class VaillantDeviceEntity(CoordinatorEntity[VaillantData]):
         return {
             "identifiers": {(DOMAIN, self._device.id)},
             "name": self._device.station_name,
-            "sw_version": self._device.firmware,
+            "sw_version": str(self._device.firmware) if self._device.firmware is not None else None,
             "manufacturer": self._device.type,
         }
 
@@ -242,7 +276,7 @@ class VaillantModuleEntity(CoordinatorEntity[VaillantData]):
         return {
             "identifiers": {(DOMAIN, self._module.id)},
             "name": self._module.module_name,
-            "sw_version": self._module.firmware,
+            "sw_version": str(self._module.firmware) if self._module.firmware is not None else None,
             "manufacturer": self._device.type,
             "via_device": (DOMAIN, self._device.id),
         }
@@ -309,7 +343,7 @@ class VaillantProgramEntity(CoordinatorEntity[VaillantData]):
         return {
             "identifiers": {(DOMAIN, self._module.id)},
             "name": self._module.module_name,
-            "sw_version": self._module.firmware,
+            "sw_version": str(self._module.firmware) if self._module.firmware is not None else None,
             "manufacturer": self._device.type,
             "via_device": (DOMAIN, self._device.id),
         }
@@ -381,7 +415,7 @@ class VaillantMeasurementEntity(CoordinatorEntity[VaillantData]):
         return {
             "identifiers": {(DOMAIN, self._module.id)},
             "name": self._module.module_name,
-            "sw_version": self._module.firmware,
+            "sw_version": str(self._module.firmware) if self._module.firmware is not None else None,
             "manufacturer": self._device.type,
             "via_device": (DOMAIN, self._device.id),
         }

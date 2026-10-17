@@ -141,7 +141,7 @@ class VaillantWaterHeater(VaillantDeviceEntity, WaterHeaterEntity):
         except ApiException as ex:
             _LOGGER.exception(ex)
 
-        await self.coordinator.async_request_refresh()
+        await self.coordinator.async_refresh_after_change()
 
     async def async_set_temperature(self, **kwargs) -> None:
         """Update target water temperature value."""
@@ -160,4 +160,4 @@ class VaillantWaterHeater(VaillantDeviceEntity, WaterHeaterEntity):
         except ApiException as ex:
             _LOGGER.exception(ex)
 
-        await self.coordinator.async_request_refresh()
+        await self.coordinator.async_refresh_after_change()

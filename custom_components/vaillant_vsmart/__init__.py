@@ -15,6 +15,8 @@ from vaillant_netatmo_api import ThermostatClient, Token, TokenStore
 
 from .const import (
     DOMAIN,
+    CONF_REFRESH_DELAY,
+    DEFAULT_REFRESH_DELAY,
     PLATFORMS,
 )
 from .entity import VaillantCoordinator
@@ -53,10 +55,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         TokenStore(client_id, client_secret, token, handle_token_update),
     )
 
-    coordinator = VaillantCoordinator(hass, client)
+    coordinator = VaillantCoordinator(
+        hass, client, entry.options.get(CONF_REFRESH_DELAY, DEFAULT_REFRESH_DELAY)
+    )
     await coordinator.async_config_entry_first_refresh()
 
     hass.data[DOMAIN][entry.entry_id] = coordinator
+    entry.async_on_unload(coordinator.async_stop_follow_up_refresh)
+    entry.async_on_unload(entry.add_update_listener(async_update_options))
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
@@ -71,3 +77,10 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.data[DOMAIN].pop(entry.entry_id)
 
     return unload_ok
+
+
+async def async_update_options(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Apply refresh options without reloading the integration."""
+    coordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator.async_cancel_follow_up_refresh()
+    coordinator.refresh_delay = entry.options.get(CONF_REFRESH_DELAY, DEFAULT_REFRESH_DELAY)

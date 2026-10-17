@@ -1,3 +1,11 @@
+## 0.11.2-dev.2 (2026-10-17)
+
+### Bug Fixes
+
+* Add a configurable follow-up refresh after control changes to allow cloud data to propagate (default 5 seconds; 0 disables it).
+* Refresh after disabling hot water boost.
+* Pass firmware versions as strings to the Home Assistant device registry.
+
 ## [0.11.2-dev.1](https://github.com/MislavMandaric/home-assistant-vaillant-vsmart/compare/v0.11.1...v0.11.2-dev.1) (2025-10-25)
 
 

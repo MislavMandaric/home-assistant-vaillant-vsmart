@@ -12,6 +12,7 @@ from homeassistant.const import (
     CONF_TOKEN,
     CONF_USERNAME,
 )
+from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers.httpx_client import get_async_client
 from vaillant_netatmo_api import (
@@ -24,7 +25,9 @@ import voluptuous as vol
 
 from .const import (
     CONF_APP_VERSION,
+    CONF_REFRESH_DELAY,
     CONF_USER_PREFIX,
+    DEFAULT_REFRESH_DELAY,
     DOMAIN,
 )
 
@@ -35,6 +38,12 @@ class VaillantFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     """Config flow for vaillant_vsmart."""
 
     VERSION = 1
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry: config_entries.ConfigEntry):
+        """Return the options flow."""
+        return VaillantOptionsFlow(config_entry)
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
@@ -166,3 +175,26 @@ class VaillantFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             CONF_APP_VERSION: user_input.get(CONF_APP_VERSION),
             CONF_TOKEN: token_store.token.serialize(),
         }
+
+
+class VaillantOptionsFlow(config_entries.OptionsFlow):
+    """Configure the refresh delay after control changes."""
+
+    def __init__(self, entry: config_entries.ConfigEntry) -> None:
+        """Keep the entry without assigning the framework config_entry property."""
+        self._entry = entry
+
+    async def async_step_init(self, user_input: dict[str, Any] | None = None) -> FlowResult:
+        """Manage the follow-up refresh delay in whole seconds."""
+        if user_input is not None:
+            return self.async_create_entry(title="", data=user_input)
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema=vol.Schema({
+                vol.Required(
+                    CONF_REFRESH_DELAY,
+                    default=self._entry.options.get(CONF_REFRESH_DELAY, DEFAULT_REFRESH_DELAY),
+                ): vol.All(int, vol.Range(min=0)),
+            }),
+        )

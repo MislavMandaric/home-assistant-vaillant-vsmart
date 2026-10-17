@@ -104,3 +104,17 @@ Thanks to [@philippelt](https://github.com/philippelt), [@jabesq](https://github
 
 [pre-commit]: https://github.com/pre-commit/pre-commit
 [pre-commit-shield]: https://img.shields.io/badge/pre--commit-enabled-brightgreen?style=for-the-badge
+
+### Follow-up refresh after changes
+
+In **Settings → Devices & services → Vaillant vSMART → Configure**, set
+**Follow-up refresh delay (seconds)** to a non-negative whole number. The default
+is **5 seconds**; **0** disables the follow-up refresh. Changes apply immediately.
+
+The integration still refreshes immediately after a control action. It also
+schedules one additional refresh after the configured delay, allowing cloud data
+time to reflect the command. Further changes replace the pending refresh, and
+unloading the integration cancels it. This applies to climate controls, water
+heater controls, schedule activation, hot water boost, and default setpoint duration.
+If your cloud data takes longer to update, increase the delay. This is one extra
+refresh, not confirmation that the device accepted the command.
